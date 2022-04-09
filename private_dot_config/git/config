@@ -1,0 +1,51 @@
+[user]
+	name = Kyle Yan
+	email = kyleyankc@gmail.com
+[core]
+	excludesfile = ~/.config/git/ignore
+	whitespace = space-before-tab,-indent-with-non-tab,trailing-space
+[help]
+	autocorrect = 1
+[init]
+	defaultBranch = main
+[pull]
+	ff = only
+
+[alias]
+	s = status --short --branch
+	st = status --short --branch
+	d = diff
+	dc = diff --cached
+	ds = diff --staged
+	l = log --oneline --decorate
+	la = log --oneline --decorate --all
+	lg = log --oneline --decorate --graph
+	ll = log --oneline --decorate --graph --all
+	ca = commit --amend --no-edit
+	co = commit
+	sw = switch
+	swn = switch -c
+	rs = restore
+	rss = restore --staged
+	rsw = restore --staged --worktree
+	unstage = restore --staged --worktree
+	wipe = restore --staged --worktree .
+	undo = reset --soft HEAD~1
+	wt = worktree
+	wta = worktree add
+	wtl = worktree list
+
+# url shorthands
+
+[url "git@github.com:"]
+	insteadOf = "gh:"
+	pushInsteadOf = "github:"
+	pushInsteadOf = "git://github.com/"
+[url "git://github.com/"]
+	insteadOf = "github:"
+[url "git@gist.github.com:"]
+	insteadOf = "gst:"
+	pushInsteadOf = "gist:"
+	pushInsteadOf = "git://gist.github.com/"
+[url "git://gist.github.com/"]
+	insteadOf = "gist:"

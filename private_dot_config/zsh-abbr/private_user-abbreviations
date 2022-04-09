@@ -1,0 +1,3 @@
+abbr "cea"="chezmoi edit --apply"
+abbr "cra"="chezmoi re-add"
+abbr "cz"="chezmoi"

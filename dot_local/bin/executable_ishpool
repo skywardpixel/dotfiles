@@ -1,0 +1,9 @@
+#!/bin/zsh
+
+typeset -U session_choices
+session_choices=(remote)
+
+local existing_sessions=(${(@f)"$(shpool list | tail -n +2 | awk '{print $1}')"})
+session_choices+=($existing_sessions)
+
+printf "%s\n" $session_choices | fzf --layout=reverse | xargs -o --no-run-if-empty -- shpool attach -f

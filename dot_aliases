@@ -1,0 +1,11 @@
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias mkdir='mkdir -pv'
+alias path='echo -e ${PATH//:/\\n}'
+alias du="ncdu --color dark -rr -x --exclude .git --exclude node_modules"
+alias shortdate="date +%Y%m%d%H%M%S"
+alias r4='rchar 4'
+alias gettemp='cd $(mktemp -d)'
+alias n='nvim'
+alias nr='nvim -c "lua Snacks.picker.recent()"'
+alias nf='nvim -c "lua Snacks.picker.files()"'

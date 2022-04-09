@@ -1,0 +1,22 @@
+# Keep at the top
+mattmc3/ez-compinit
+
+# Zephyr core plugins
+mattmc3/zephyr path:plugins/color
+# mattmc3/zephyr path:plugins/confd
+mattmc3/zephyr path:plugins/directory
+mattmc3/zephyr path:plugins/editor
+mattmc3/zephyr path:plugins/helper
+mattmc3/zephyr path:plugins/history
+mattmc3/zephyr path:plugins/utility
+mattmc3/zephyr path:plugins/zfunctions
+
+# Core prompt and interactive plugins
+romkatv/powerlevel10k
+olets/zsh-abbr
+Aloxaf/fzf-tab
+
+# Keep at the bottom
+zsh-users/zsh-autosuggestions
+olets/zsh-autosuggestions-abbreviations-strategy
+zdharma-continuum/fast-syntax-highlighting

@@ -1,0 +1,4 @@
+typeset -U path
+path=("$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin" "/opt/homebrew/bin" $path)
+
+[[ -f ~/.env.local ]] && source ~/.env.local

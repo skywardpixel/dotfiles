@@ -1,0 +1,78 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+##### ENVIRONMENT #####
+
+export EDITOR=nvim
+export VISUAL=nvim
+export GPG_TTY=$(tty)
+
+# Prepend custom path again, because macOS path_helper messes with $PATH after
+# ~/.zshenv is sourced.
+typeset -U path
+path=("$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin" "/opt/homebrew/bin" $path)
+
+# Use osc52.sh as pbcopy if in a remote session.
+if [[ -n "$SSH_TTY" || -n "$SHPOOL_SESSION_NAME" ]]; then
+  alias pbcopy='osc52.sh'
+fi
+
+##### CUSTOM COMPLETIONS (before Antidote) #####
+
+fpath=($HOME/.config/zsh/completions $fpath)
+
+##### ANTIDOTE ######
+
+zstyle ':zephyr:plugin:editor' key-bindings 'vi'
+
+# fzf-tab
+zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:*' switch-group '<' '>'
+
+source ~/.antidote/antidote.zsh
+antidote load
+
+##### ZLE AND KEYBINDS #####
+
+# Press 'V' in vi mode to edit buffer in editor
+autoload edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd "V" edit-command-line
+
+# Press 'ctrl-y' to copy buffer
+copybuffer() { pbcopy <<< $BUFFER }
+zle -N copybuffer
+bindkey -M vicmd "^Y" copybuffer
+bindkey -M viins "^Y" copybuffer
+bindkey -M emacs "^Y" copybuffer
+
+# Disable bracket-paste since it doesn't work well with vimode
+unset zle_bracketed_paste
+
+##### MISC PLUGINS (after Antidote) #####
+
+# fzf
+if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
+  source /usr/share/doc/fzf/examples/key-bindings.zsh
+  source /usr/share/doc/fzf/examples/completion.zsh
+fi
+
+eval "$(zoxide init zsh)"
+eval "$(mise activate zsh)"
+source <(fzf --zsh)
+
+##### CUSTOM ALIASES #####
+
+[[ -f ~/.aliases ]] && source ~/.aliases
+
+##### POWERLEVEL10K #####
+
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

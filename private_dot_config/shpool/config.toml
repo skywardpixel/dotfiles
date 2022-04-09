@@ -1,0 +1,7 @@
+prompt_prefix = ""
+forward_env = ["SSH_CLIENT", "SSH_TTY", "SSH_CONNECTION"]
+session_restore_mode = { lines = 1000 }
+
+[[keybinding]]
+binding = "Ctrl-a d"
+action = "detach"
