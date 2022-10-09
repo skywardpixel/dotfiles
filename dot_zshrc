@@ -16,7 +16,6 @@ zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
 (( $+commands[goenv] )) && eval "$(goenv init -)"
 (( $+commands[pyenv] )) && eval "$(pyenv init -)"
 (( $+commands[direnv] )) && eval "$(direnv hook zsh)"
-if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
 [ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
 
