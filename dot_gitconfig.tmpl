@@ -1,23 +1,10 @@
 [user]
 	name = Kyle Yan
 	email = kyleyankc@gmail.com
-{{- if eq .chezmoi.os "darwin" }}
-	signingkey = 98A991D0
-{{- end }}
 [core]
 	excludesfile = ~/.gitignore
 	whitespace = space-before-tab,-indent-with-non-tab,trailing-space
 	trustctime = false
-[gpg]
-{{- if eq .chezmoi.os "darwin" }}
-	program = /usr/local/bin/gpg
-{{- else }}
-	program = /usr/bin/gpg
-{{- end }}
-[commit]
-{{- if eq .chezmoi.os "darwin" }}
-	gpgsign = true
-{{- end }}
 [alias]
 	adog = log --all --decorate --oneline --graph
 [help]
