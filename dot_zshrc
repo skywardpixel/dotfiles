@@ -8,19 +8,6 @@ fi
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
 
-[ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
-
-(( $+commands[rbenv] )) && eval "$(rbenv init -)"
-(( $+commands[jenv] )) && eval "$(jenv init -)"
-(( $+commands[nodenv] )) && eval "$(nodenv init -)"
-(( $+commands[goenv] )) && eval "$(goenv init -)"
-(( $+commands[pyenv] )) && eval "$(pyenv init -)"
-(( $+commands[direnv] )) && eval "$(direnv hook zsh)"
-
-[ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
-
-export GPG_TTY=$(tty)
-
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
     print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
@@ -49,13 +36,15 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 zinit snippet OMZP::git
 zinit snippet OMZP::brew
 zinit snippet OMZP::fasd
-zinit snippet OMZP::pyenv
-zinit snippet OMZP::rbenv
-zinit snippet OMZP::jenv
-zinit snippet OMZP::direnv
-zinit snippet OMZP::forklift
 zinit snippet OMZP::keychain
+
+export GPG_TTY=$(tty)
+
+[ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
+
+[ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
 
 [ ! -f ~/.p10k.zsh ] || source ~/.p10k.zsh
 
 [ ! -f ~/.fzf.zsh ] || source ~/.fzf.zsh
+

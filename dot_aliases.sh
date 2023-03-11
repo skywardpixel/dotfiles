@@ -17,26 +17,7 @@ alias qfind="find . -name "                 # qfind:    Quickly search for file
 alias du="ncdu --color dark -rr -x --exclude .git --exclude node_modules"
 alias shortdate="date +%Y%m%d%H%M%S"
 
-alias ca="conda activate"
-
-if [[ "$(uname)" == "Darwin" ]]; then
+if [ "$(uname)" = "Darwin" ]; then
     alias vi="mvim -v"
     alias vim="mvim -v"
 fi
-
-ff () { /usr/bin/find . -name "$@" ; }      # ff:       Find file under the current directory
-ffs () { /usr/bin/find . -name "$@"'*' ; }  # ffs:      Find file whose name starts with a given string
-ffe () { /usr/bin/find . -name '*'"$@" ; }  # ffe:      Find file whose name ends with a given string
-
-# better zz from fasd
-zz() {
-  local dir
-  dir="$(fasd -Rdl "$*" | fzf --query="$*" -1 -0 --no-sort +m)" && cd "${dir}" || return 1
-}
-
-# Usage: fv file pattern
-fv() {
-  local file
-  file="$(fzf --exact --height 40% --reverse --query="$1"  --select-1 --exit-0)"
-  [[ -n "$file" ]] && vim "$file"
-}
