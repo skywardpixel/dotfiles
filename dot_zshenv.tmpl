@@ -1,25 +1,7 @@
 typeset -U path
 
-export GO111MODULE=auto
-export GOPATH=${HOME}/go
-{{- if eq .chezmoi.os "darwin" }}
-export ANDROID_HOME=${HOME}/Library/Android/sdk
-{{- end }}
-export PYENV_ROOT="$HOME/.pyenv"
-
-path+=(/usr/local/opt/python/libexec/bin)
-path+=(/usr/local/go/bin)
-path+=(/usr/local/sbin)
-path+=(/usr/local/opt/riscv-gnu-toolchain/bin)
-path+=(/usr/local/opt/ccache/libexec)
 path+=(${HOME}/.local/bin)
 path+=(${HOME}/.cargo/bin)
 path+=(${HOME}/.deno/bin)
 path+=(${HOME}/flutter/bin)
 path+=(${HOME}/bin)
-path+=(${GOPATH}/bin)
-path+=(${GOROOT}/bin)
-path+=(${ANDROID_HOME}/tools/bin)
-path+=(${ANDROID_HOME}/platform-tools)
-path+=(${ANDROID_HOME}/emulator)
-path+=(${PYENV_ROOT}/bin)
