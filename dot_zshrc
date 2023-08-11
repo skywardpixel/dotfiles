@@ -45,8 +45,6 @@ export GPG_TTY=$(tty)
 
 [ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
 
-[ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
-
 [ ! -f ~/.p10k.zsh ] || source ~/.p10k.zsh
 
 [ ! -f ~/.fzf.zsh ] || source ~/.fzf.zsh
