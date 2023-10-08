@@ -40,7 +40,7 @@ zinit snippet OMZP::keychain
 
 export GPG_TTY=$(tty)
 
-(( $+commands[pyenv] )) && eval "$(pyenv init -)"
+(( $+commands[pyenv] )) && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 (( $+commands[direnv] )) && eval "$(direnv hook zsh)"
 
 [ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
@@ -48,4 +48,3 @@ export GPG_TTY=$(tty)
 [ ! -f ~/.p10k.zsh ] || source ~/.p10k.zsh
 
 [ ! -f ~/.fzf.zsh ] || source ~/.fzf.zsh
-
