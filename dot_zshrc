@@ -42,6 +42,7 @@ export GPG_TTY=$(tty)
 
 (( $+commands[pyenv] )) && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 (( $+commands[direnv] )) && eval "$(direnv hook zsh)"
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
 [ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
 
