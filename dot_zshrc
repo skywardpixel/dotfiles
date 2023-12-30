@@ -42,6 +42,7 @@ zinit snippet OMZP::keychain
 export GPG_TTY=$(tty)
 
 (( $+commands[pyenv] )) && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
+(( $+commands[rbenv] )) && eval "$(rbenv init - zsh)"
 (( $+commands[direnv] )) && eval "$(direnv hook zsh)"
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 (( $+commands[pkgx] )) && source <(pkgx --shellcode)  #docs.pkgx.sh/shellcode
