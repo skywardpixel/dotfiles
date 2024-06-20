@@ -31,7 +31,6 @@ zinit light-mode for \
 ### End of Zinit's installer chunk
 
 zinit ice depth=1; zinit light romkatv/powerlevel10k
-zinit ice depth=1; zinit light jeffreytse/zsh-vi-mode
 zinit light zsh-users/zsh-autosuggestions
 zinit light zdharma-continuum/fast-syntax-highlighting
 zinit snippet OMZP::git
@@ -50,3 +49,13 @@ export GPG_TTY=$(tty)
 [ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
 [ ! -f ~/.p10k.zsh ] || source ~/.p10k.zsh
 [ ! -f ~/.fzf.zsh ] || source ~/.fzf.zsh
+
+{{ if eq .chezmoi.os "darwin" }}
+# pnpm
+export PNPM_HOME="/Users/$USER/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+{{ end }}
+# pnpm end
