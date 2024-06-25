@@ -44,6 +44,7 @@ export GPG_TTY=$(tty)
 (( $+commands[rbenv] )) && eval "$(rbenv init - zsh)"
 (( $+commands[direnv] )) && eval "$(direnv hook zsh)"
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
+(( $+commands[fzf] )) && source <(fzf --zsh)
 (( $+commands[pkgx] )) && source <(pkgx --shellcode)  #docs.pkgx.sh/shellcode
 
 [ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
