@@ -17,3 +17,8 @@
   type: git-repo
   url: https://github.com/nvim-lua/kickstart.nvim.git
   refreshPeriod: 168h
+
+.local/bin/fzf-git.sh:
+  type: file
+  url: https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh
+  refreshPeriod: 168h

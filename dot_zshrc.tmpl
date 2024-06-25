@@ -50,6 +50,7 @@ export GPG_TTY=$(tty)
 [ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
 [ ! -f ~/.p10k.zsh ] || source ~/.p10k.zsh
 [ ! -f ~/.fzf.zsh ] || source ~/.fzf.zsh
+[ ! -f ~/.local/bin/fzf-git.sh ] || source ~/.local/bin/fzf-git.sh
 
 {{ if eq .chezmoi.os "darwin" }}
 # pnpm
