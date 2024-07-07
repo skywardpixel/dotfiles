@@ -35,12 +35,10 @@ zinit light zsh-users/zsh-autosuggestions
 zinit light zdharma-continuum/fast-syntax-highlighting
 zinit snippet OMZP::git
 zinit snippet OMZP::brew
-zinit snippet OMZP::fasd
 zinit snippet OMZP::keychain
 
 export GPG_TTY=$(tty)
 
-(( $+commands[pyenv] )) && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 (( $+commands[rbenv] )) && eval "$(rbenv init - zsh)"
 (( $+commands[direnv] )) && eval "$(direnv hook zsh)"
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
@@ -59,5 +57,5 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-{{ end }}
 # pnpm end
+{{ end }}
