@@ -12,18 +12,3 @@
   type: git-repo
   url: https://github.com/tmux-plugins/tpm
   refreshPeriod: 168h
-
-.config/nvim:
-  type: git-repo
-  url: https://github.com/nvim-lua/kickstart.nvim.git
-  refreshPeriod: 168h
-
-.local/bin/fzf-git.sh:
-  type: file
-  url: https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh
-  refreshPeriod: 168h
-
-.config/alacritty/themes:
-  type: git-repo
-  url: https://github.com/alacritty/alacritty-theme
-  refreshPeriod: 168h
