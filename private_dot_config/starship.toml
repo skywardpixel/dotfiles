@@ -6,7 +6,7 @@ command_timeout = 500     # Default: 500
 add_newline = true
 
 format = """\
-$directory
+$directory\
 $git_branch\
 $git_commit\
 $git_state\
