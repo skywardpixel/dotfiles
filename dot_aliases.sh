@@ -1,4 +1,4 @@
-alias ls="eza --color=always --icons=always"
+alias ls="eza --color=always"
 alias cp="cp -iv"                           # Preferred "cp" implementation
 alias mv="mv -iv"                           # Preferred "mv" implementation
 alias mkdir="mkdir -pv"                     # Preferred "mkdir" implementatio
