@@ -1,5 +1,5 @@
 # vim: ft=zsh
-EDITOR=nvim
+export EDITOR=nvim
 
 HISTSIZE=5000
 HISTFILE=~/.zsh_history
