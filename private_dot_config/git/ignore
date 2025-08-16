@@ -100,3 +100,5 @@ __pycache__/
 .python-version
 .pdm.toml
 __pypackages__/
+
+**/.claude/*.local.json
