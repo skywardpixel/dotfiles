@@ -1,6 +1,6 @@
-theme = Breeze
+theme = TokyoNight
 font-size = 14
-font-family = Google Sans Code
+font-family = Lilex Nerd Font
 background-opacity = 0.9
 background-blur = true
 background-blur-radius = 5
@@ -8,3 +8,5 @@ window-padding-x = 8
 window-padding-y = 8
 shell-integration-features = true
 keybind = shift+enter=text:\n
+custom-shader = ./shaders/cursor_blaze.glsl
+macos-icon = blueprint

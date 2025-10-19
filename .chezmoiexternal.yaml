@@ -12,3 +12,8 @@
   type: git-repo
   url: https://github.com/tmux-plugins/tpm
   refreshPeriod: 168h
+
+.config/ghostty/shaders:
+  type: git-repo
+  url: https://github.com/hackr-sh/ghostty-shaders
+  refreshPeriod: 168h
