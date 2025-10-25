@@ -3,11 +3,6 @@
   url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   refreshPeriod: 168h
 
-.local/share/zinit/zinit.git:
-  type: git-repo
-  url: https://github.com/zdharma-continuum/zinit
-  refreshPeriod: 168h
-
 .tmux/plugins/tpm:
   type: git-repo
   url: https://github.com/tmux-plugins/tpm
@@ -16,4 +11,19 @@
 .config/ghostty/shaders:
   type: git-repo
   url: https://github.com/hackr-sh/ghostty-shaders
+  refreshPeriod: 168h
+
+.antidote:
+  type: git-repo
+  url: https://github.com/mattmc3/antidote
+  refreshPeriod: 168h
+
+.config/zellij/plugins/zjstatus.wasm:
+  type: file
+  url: https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm
+  refreshPeriod: 168h
+
+.config/zellij/plugins/zjframes.wasm:
+  type: file
+  url: https://github.com/dj95/zjstatus/releases/latest/download/zjframes.wasm
   refreshPeriod: 168h

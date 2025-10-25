@@ -1,0 +1,3 @@
+[[keybinding]]
+binding = "Ctrl-a d"
+action = "detach"

@@ -1,7 +1,6 @@
-typeset -U path
+# vim: ft=zsh
 
-path+=(${HOME}/.local/bin)
-path+=(${HOME}/.cargo/bin)
-path+=(${HOME}/.deno/bin)
-path+=(${HOME}/flutter/bin)
-path+=(${HOME}/bin)
+typeset -U path
+path=("$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin" $path)
+
+[[ -f ~/.env.local ]] && source ~/.env.local

@@ -1,3 +1,3 @@
 # dotfiles
 
-My dotfiles, managed by [twpayne/chezmoi](https://github.com/twpayne/chezmoi).
+My dotfiles, managed by [chezmoi](https://github.com/twpayne/chezmoi).

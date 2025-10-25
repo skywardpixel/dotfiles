@@ -1,0 +1,12 @@
+[tools]
+chezmoi = "latest"
+dust = "latest"
+fd = "latest"
+fx = "latest"
+helm = "latest"
+neovim = "latest"
+terraform = "latest"
+tree-sitter = "latest"
+uv = "latest"
+yazi = "latest"
+zellij = "latest"
