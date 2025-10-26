@@ -14,25 +14,26 @@ export GPG_TTY=$(tty)
 
 ##### ANTIDOTE ######
 
+zstyle ':zephyr:plugin:editor' key-bindings 'vi'
+
 source ~/.antidote/antidote.zsh
 antidote load
 
+# fzf-tab
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 
-zstyle ':zephyr:plugin:editor:key-bindings' 'vi'
-
 
 ##### ZLE AND KEYBINDS #####
 
-# Press 'v' in vi mode to edit buffer in editor
+# Press 'V' in vi mode to edit buffer in editor
 autoload edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd V edit-command-line
 
 # Press 'Y' in vi mode to copy buffer to OSC 52 clipboard
-cmd_to_clip() { osc52.sh <<< $BUFFER }
+cmd_to_clip() { pbcopy <<< $BUFFER }
 zle -N cmd_to_clip
 bindkey -M vicmd Y cmd_to_clip
 
