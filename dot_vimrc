@@ -67,12 +67,15 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'ojroques/vim-oscyank', {'branch': 'main'}
 Plug 'editorconfig/editorconfig-vim'
-Plug 'nordtheme/vim'
+Plug 'ghifarit53/tokyonight-vim'
 
 call plug#end()
 
-colorscheme nord
-let g:lightline = {'colorscheme': 'nord'}
+set termguicolors
+let g:tokyonight_style = 'night' " available: night, storm
+let g:tokyonight_enable_italic = 1
+colorscheme tokyonight
+let g:lightline = {'colorscheme': 'tokyonight'}
 
 filetype plugin indent on
 

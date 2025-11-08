@@ -1,29 +1,29 @@
-# vim: ft=zsh
-
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-export EDITOR=nvim
-export VISUAL=nvim
+export EDITOR=hx
+export VISUAL=hx
 export GPG_TTY=$(tty)
 
+# Use osc52.sh as pbcopy if in a remote session.
+if [[ -n "$SSH_TTY" || -n "$SHPOOL_SESSION_NAME" ]]; then
+  alias pbcopy='osc52.sh'
+fi
+
+##### CUSTOM COMPLETIONS (before Antidote) #####
+
+fpath=($HOME/.config/zsh/completions $fpath)
 
 ##### ANTIDOTE ######
 
 zstyle ':zephyr:plugin:editor' key-bindings 'vi'
 
-source ~/.antidote/antidote.zsh
-antidote load
-
 # fzf-tab
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
+zstyle -d ':completion:*' format
+zstyle ':completion:*:descriptions' format '[%d]'
 
+source ~/.antidote/antidote.zsh
+antidote load
 
 ##### ZLE AND KEYBINDS #####
 
@@ -32,29 +32,32 @@ autoload edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd V edit-command-line
 
-# Press 'Y' in vi mode to copy buffer to OSC 52 clipboard
-cmd_to_clip() { pbcopy <<< $BUFFER }
-zle -N cmd_to_clip
-bindkey -M vicmd Y cmd_to_clip
+# Press 'ctrl-o' to copy buffer
+copybuffer() { pbcopy <<< $BUFFER }
+zle -N copybuffer
+bindkey -M vicmd "^O" copybuffer
+bindkey -M viins "^O" copybuffer
+bindkey -M emacs "^O" copybuffer
 
 # Disable bracket-paste since it doesn't work well with vimode
 unset zle_bracketed_paste
 
+##### MISC PLUGINS (after Antidote) #####
 
-##### ADDITIONAL SCRIPTS #####
-
-[ ! -f ~/.aliases.sh ] || source ~/.aliases.sh
-[ ! -f ~/.cargo/env ] || . ~/.cargo/env
-
-
-##### SHELL HOOKS #####
+# fzf
+if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
+  source /usr/share/doc/fzf/examples/key-bindings.zsh
+  source /usr/share/doc/fzf/examples/completion.zsh
+fi
 
 eval "$(zoxide init zsh)"
 eval "$(mise activate zsh)"
 source <(fzf --zsh)
 
+##### CUSTOM ALIASES #####
 
-##### P10K #####
+[[ -f ~/.aliases ]] && source ~/.aliases
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+##### OH MY POSH #####
+
+eval "$(oh-my-posh init zsh)"

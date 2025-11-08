@@ -17,15 +17,21 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
+require("config.options")
+require("config.autocmds")
+require("config.keymaps")
 
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
     { import = "plugins" },
+    { import = "google-plugins" },
   },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "tokyonight" } },
-  -- automatically check for plugin updates
-  checker = { enabled = true },
+  checker = {
+    enabled = true, -- check for plugin updates periodically
+    notify = false, -- notify on update
+  }, -- automatically check for plugin updates
 })

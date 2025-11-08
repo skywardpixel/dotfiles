@@ -1,0 +1,96 @@
+#compdef _shpool shpool
+#-----------------------------------------------------------------------------
+#
+# Zsh completion script for shpool (go/shpool).
+#
+# Provides completion for subcommands (attach, detach, kill, etc.) and
+# global/subcommand options.
+#
+# Author: tanshuhao@
+# Converted from the clap definition of shpool at
+# https://github.com/shell-pool/shpool/blob/master/libshpool/src/lib.rs
+# ------------------------------------------------------------------------------
+
+# _shpool_sessions: Helper function to retrieve a list of active session names.
+_shpool_sessions() {
+  local -a sessions=(${(@f)"$(shpool list | tail -n +2 | awk '{print $1}')"})
+  _values 'sessions' $sessions
+}
+
+_shpool() {
+  local line state context
+
+  # Global options applicable to shpool and its subcommands.
+  local -a global_opts=(
+    '(-h --help)'{-h,--help}'[Show help message]'
+    *{-v,--verbose}'[Show more in logs]'
+    '(-l --log-file)'{-l,--log-file=}'[The file to write logs to]:log_file:_files'
+    '(-s --socket)'{-s,--socket=}'[The path for the unix socket to listen on]:socket:_files'
+    '(-c --config-file)'{-c,--config-file=}'[A toml file containing configuration]:config_file:_files'
+    '(-d --daemonize)'{-d,--daemonize}'[Automatically launch a daemon if one is not running]'
+    '(-D --no-daemonize)'{-D,--no-daemonize}'[Do not automatically launch a daemon]'
+  )
+
+  # Definition of shpool subcommands.
+  local -a subcmds=(
+    'attach:Creates or attaches to an existing shell session'
+    'daemon:Starts running a daemon that holds a pool of shells'
+    'detach:Make the given session detach from shpool'
+    'kill:Kill the given sessions'
+    'list:lists all the running shell sessions'
+    'set-log-level:Dynamically change daemon log level'
+    'version:Print version'
+  )
+
+  # Main argument parsing.
+  # -C: enables state-based completion.
+  # '1: :->command': For the 1st positional argument, switch to the 'command' state.
+  # '*:: :->args': For any subsequent argument, switch to the 'args' state.
+  _arguments -C \
+    "${global_opts[@]}" \
+    '1: :->command' \
+    '*:: :->args'
+
+  case $state in
+    # In 'command' state, complete subcommand names.
+    command)
+      _describe -t commands 'shpool command' subcmds
+      ;;
+    # In 'args' state, route to subcommand-specific completions
+    # based on the subcommand provided in $line[1].
+    args)
+      case $line[1] in
+        # Completions for 'shpool attach ...'
+        attach)
+          _arguments \
+            "${global_opts[@]}" \
+            '(-f --force)'{-f,--force}'[If a tty is already attached to the session, detach it first]' \
+            '--ttl=[Automatically kill the session after the given time]:ttl:' \
+            '(-c --cmd)'{-c,--cmd=}'[A command to run instead of the user'\''s default shell]:cmd:' \
+            '1:name of session to attach to:_shpool_sessions'
+          ;;
+        # Completions for 'shpool detach ...'
+        detach)
+          _arguments \
+            "${global_opts[@]}" \
+            '*:sessions to detach:_shpool_sessions'
+          ;;
+        # Completions for 'shpool kill ...'
+        kill)
+          _arguments \
+            "${global_opts[@]}" \
+            '*:sessions to kill:_shpool_sessions'
+          ;;
+        # Completions for 'shpool set-log-level ...'
+        set-log-level)
+          _arguments \
+            "${global_opts[@]}" \
+            '1:new log level:(trace debug info warn error)'
+          ;;
+        *)
+          _arguments "${global_opts[@]}"
+          ;;
+      esac
+      ;;
+  esac
+}
