@@ -30,14 +30,14 @@ antidote load
 # Press 'V' in vi mode to edit buffer in editor
 autoload edit-command-line
 zle -N edit-command-line
-bindkey -M vicmd V edit-command-line
+bindkey -M vicmd "V" edit-command-line
 
-# Press 'ctrl-o' to copy buffer
+# Press 'ctrl-y' to copy buffer
 copybuffer() { pbcopy <<< $BUFFER }
 zle -N copybuffer
-bindkey -M vicmd "^O" copybuffer
-bindkey -M viins "^O" copybuffer
-bindkey -M emacs "^O" copybuffer
+bindkey -M vicmd "^Y" copybuffer
+bindkey -M viins "^Y" copybuffer
+bindkey -M emacs "^Y" copybuffer
 
 # Disable bracket-paste since it doesn't work well with vimode
 unset zle_bracketed_paste
