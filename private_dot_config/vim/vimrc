@@ -54,12 +54,12 @@ else
 endif
 
 filetype off
-if filereadable("~/.vim/glug-plugins.vim")
-  source ~/.vim/glug-plugins.vim
+if filereadable("~/.config/vim/glug-plugins.vim")
+  source ~/.config/vim/glug-plugins.vim
 endif
 
 """ vim-plug
-call plug#begin('~/.vim/plugged')
+call plug#begin()
 
 Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-sensible'
