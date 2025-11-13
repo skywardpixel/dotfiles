@@ -2,9 +2,8 @@
 	name = Kyle Yan
 	email = kyleyankc@gmail.com
 [core]
-	excludesfile = ~/.gitignore
+	excludesfile = ~/.config/git/ignore
 	whitespace = space-before-tab,-indent-with-non-tab,trailing-space
-	trustctime = false
 [alias]
 	adog = log --all --decorate --oneline --graph
 [help]
