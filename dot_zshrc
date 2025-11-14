@@ -16,9 +16,12 @@ fpath=($HOME/.config/zsh/completions $fpath)
 zstyle ':zephyr:plugin:editor' key-bindings 'vi'
 
 # fzf-tab
-zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
+zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:*' switch-group '<' '>'
 
 source ~/.antidote/antidote.zsh
 antidote load
