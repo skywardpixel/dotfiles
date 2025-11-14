@@ -1,6 +1,8 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+vim.opt.termguicolors = true
+
 -- Line numbers
 vim.opt.number = true
 vim.opt.relativenumber = true
