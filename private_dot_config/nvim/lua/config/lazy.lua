@@ -19,6 +19,7 @@ vim.opt.rtp:prepend(lazypath)
 -- loading lazy.nvim so that mappings are correct.
 require("config.options")
 require("config.keymaps")
+require("config.lsp")
 
 -- Setup lazy.nvim
 require("lazy").setup({
