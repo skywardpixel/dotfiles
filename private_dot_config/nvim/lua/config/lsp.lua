@@ -1,1 +1,2 @@
-# Add vim.lsp.enable calls here
+-- Add vim.lsp.enable calls here
+vim.lsp.enable("ciderlsp")
