@@ -6,10 +6,10 @@ return {
   },
 
   {
-    'MeanderingProgrammer/render-markdown.nvim',
+    "MeanderingProgrammer/render-markdown.nvim",
     dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-mini/mini.icons'
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-mini/mini.icons",
     },
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
@@ -23,4 +23,19 @@ return {
       -- add any custom options here
     },
   },
+
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    },
+  },
+
+  {
+    "lewis6991/gitsigns.nvim",
+    opts = {},
+  }
 }
