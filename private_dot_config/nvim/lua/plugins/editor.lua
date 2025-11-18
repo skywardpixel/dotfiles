@@ -17,6 +17,10 @@ return {
   },
 
   {
+    "nvim-treesitter/nvim-treesitter-context",
+  },
+
+  {
     "nvim-mini/mini.ai",
     version = false,
     opts = function()
