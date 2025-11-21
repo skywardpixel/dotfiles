@@ -1,4 +1,5 @@
 [tools]
+"aqua:LuaLS/lua-language-server" = "latest"
 chezmoi = "latest"
 dust = "latest"
 fd = "latest"
