@@ -1,6 +1,6 @@
 Host *
   ControlMaster auto
-  ControlPath ~/.ssh/master-%r@%h:%p
+  ControlPath ~/.ssh/ctrl-%C
   ControlPersist 20h
   ServerAliveInterval 30
   ServerAliveCountMax 5
