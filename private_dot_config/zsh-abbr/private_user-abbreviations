@@ -1,3 +1,4 @@
+abbr "bubu"="brew update && brew upgrade"
 abbr "cea"="chezmoi edit --apply"
 abbr "cra"="chezmoi re-add"
 abbr "cz"="chezmoi"
