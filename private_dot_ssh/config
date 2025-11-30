@@ -4,3 +4,5 @@ Host *
   ControlPersist 20h
   ServerAliveInterval 30
   ServerAliveCountMax 5
+
+Include ~/.ssh/conf.d/*
