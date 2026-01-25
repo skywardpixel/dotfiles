@@ -42,9 +42,9 @@ return {
             i = { "@block.inner", "@conditional.inner", "@loop.inner" },
           }),
           f = gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),       -- class
-          u = gen_spec.function_call(),                                              -- u for "Usage"
-          U = gen_spec.function_call({ name_pattern = "[%w_]" }),                    -- without dot in function name
+          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
+          u = gen_spec.function_call(), -- u for "Usage"
+          U = gen_spec.function_call({ name_pattern = "[%w_]" }), -- without dot in function name
         },
       }
     end,

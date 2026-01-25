@@ -7,5 +7,5 @@ background-blur-radius = 5
 font-family = Lilex Nerd Font
 font-size = 14
 macos-option-as-alt = true
-macos-icon = blueprint
 custom-shader = ./shaders/cursor_blaze.glsl
+keybind = global:cmd+backquote=toggle_quick_terminal
