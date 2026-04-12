@@ -1,56 +1,5 @@
 return {
   {
-    "neovim/nvim-lspconfig",
-  },
-
-  {
-    "mason-org/mason-lspconfig.nvim",
-    opts = {},
-    dependencies = {
-      { "mason-org/mason.nvim", opts = {} },
-      "neovim/nvim-lspconfig",
-    },
-  },
-
-  {
-    "nvim-treesitter/nvim-treesitter",
-    branch = "main",
-    build = ":TSUpdate",
-    lazy = false,
-    opts = {},
-  },
-
-  {
-    "nvim-treesitter/nvim-treesitter-textobjects",
-    branch = "main",
-  },
-
-  {
-    "nvim-treesitter/nvim-treesitter-context",
-  },
-
-  {
-    "nvim-mini/mini.ai",
-    version = false,
-    opts = function()
-      local gen_spec = require("mini.ai").gen_spec
-      return {
-        n_lines = 500,
-        custom_textobjects = {
-          o = gen_spec.treesitter({ -- code block
-            a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-            i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-          }),
-          f = gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),       -- class
-          u = gen_spec.function_call(),                                              -- u for "Usage"
-          U = gen_spec.function_call({ name_pattern = "[%w_]" }),                    -- without dot in function name
-        },
-      }
-    end,
-  },
-
-  {
     "saghen/blink.cmp",
     -- optional: provides snippets for the snippet source
     dependencies = { "rafamadriz/friendly-snippets" },
@@ -102,43 +51,5 @@ return {
       fuzzy = { implementation = "prefer_rust_with_warning" },
     },
     opts_extend = { "sources.default" },
-  },
-
-  {
-    "folke/trouble.nvim",
-    opts = {},
-    cmd = "Trouble",
-    keys = {
-      {
-        "<leader>xx",
-        "<cmd>Trouble diagnostics toggle<cr>",
-        desc = "Diagnostics (Trouble)",
-      },
-      {
-        "<leader>xX",
-        "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-        desc = "Buffer Diagnostics (Trouble)",
-      },
-      {
-        "<leader>cs",
-        "<cmd>Trouble symbols toggle focus=false<cr>",
-        desc = "Symbols (Trouble)",
-      },
-      {
-        "<leader>cl",
-        "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
-        desc = "LSP Definitions / references / ... (Trouble)",
-      },
-      {
-        "<leader>xL",
-        "<cmd>Trouble loclist toggle<cr>",
-        desc = "Location List (Trouble)",
-      },
-      {
-        "<leader>xQ",
-        "<cmd>Trouble qflist toggle<cr>",
-        desc = "Quickfix List (Trouble)",
-      },
-    },
   },
 }

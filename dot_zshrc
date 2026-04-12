@@ -11,25 +11,24 @@ export EDITOR=nvim
 export VISUAL=nvim
 export GPG_TTY=$(tty)
 
-[[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
-
-# Prepend custom path again, because macOS path_helper messes with $PATH after
+# Set up homebrew's paths again, because macOS path_helper messes with $PATH after
 # ~/.zshenv is sourced.
+[[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
+# Prepend custom path again.
 typeset -U path
 path=("$HOME/.local/bin" "$HOME/.cargo/bin" $path)
 
 # Use osc52.sh as pbcopy if in a remote session.
-if [[ -n "$SSH_TTY" || -n "$SHPOOL_SESSION_NAME" ]]; then
+if [[ -n "$SSH_TTY" ]]; then
   alias pbcopy='osc52.sh'
 fi
 
-##### CUSTOM COMPLETIONS (before Antidote) #####
+##### FUNCTIONS AND COMPLETIONS (before Antidote) #####
 
-fpath=($HOME/.config/zsh/completions $fpath)
+fpath=($HOME/.config/zsh/functions $HOME/.config/zsh/completions $fpath)
+autoload -Uz y
 
 ##### ANTIDOTE ######
-
-zstyle ':zephyr:plugin:editor' key-bindings 'vi'
 
 # fzf-tab
 zstyle ':completion:*:git-checkout:*' sort false
@@ -37,6 +36,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
 zstyle ':fzf-tab:*' switch-group '<' '>'
 
 source ~/.antidote/antidote.zsh
@@ -47,17 +47,14 @@ antidote load
 # Press 'V' in vi mode to edit buffer in editor
 autoload edit-command-line
 zle -N edit-command-line
-bindkey -M vicmd "V" edit-command-line
+bindkey '^X^E' edit-command-line
 
 # Press 'ctrl-y' to copy buffer
 copybuffer() { pbcopy <<< $BUFFER }
 zle -N copybuffer
-bindkey -M vicmd "^Y" copybuffer
-bindkey -M viins "^Y" copybuffer
-bindkey -M emacs "^Y" copybuffer
-
-# Disable bracket-paste since it doesn't work well with vimode
-unset zle_bracketed_paste
+bindkey -M vicmd '^Y' copybuffer
+bindkey -M viins '^Y' copybuffer
+bindkey -M emacs '^Y' copybuffer
 
 ##### MISC PLUGINS (after Antidote) #####
 
@@ -68,7 +65,6 @@ if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
 fi
 
 eval "$(zoxide init zsh)"
-eval "$(mise activate zsh)"
 source <(fzf --zsh)
 
 ##### CUSTOM ALIASES #####

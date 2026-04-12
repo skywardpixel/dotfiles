@@ -1,5 +1,15 @@
 return {
   {
+    "ibhagwan/fzf-lua",
+    dependencies = { "nvim-mini/mini.icons" },
+    ---@module "fzf-lua"
+    ---@type fzf-lua.Config|{}
+    ---@diagnostic disable: missing-fields
+    opts = {}
+    ---@diagnostic enable: missing-fields
+  },
+
+  {
     "nvim-mini/mini.icons",
     lazy = true,
     opts = {},
@@ -39,6 +49,7 @@ return {
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
+    ---@module 'snacks'
     ---@type snacks.Config
     opts = {
       bigfile = { enabled = true },
@@ -91,11 +102,6 @@ return {
         "<leader>fb",
         function() Snacks.picker.buffers() end,
         desc = "Buffers",
-      },
-      {
-        "<leader>fc",
-        function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end,
-        desc = "Find Config File",
       },
       {
         "<leader>ff",
@@ -433,6 +439,7 @@ return {
 
           -- Override print to use snacks for `:=` command
           if vim.fn.has("nvim-0.11") == 1 then
+            ---@diagnostic disable-next-line: duplicate-set-field
             vim._print = function(_, ...) dd(...) end
           else
             vim.print = _G.dd
@@ -445,8 +452,8 @@ return {
           Snacks.toggle.diagnostics():map("<leader>ud")
           Snacks.toggle.line_number():map("<leader>ul")
           Snacks.toggle
-            .option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 })
-            :map("<leader>uc")
+              .option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 })
+              :map("<leader>uc")
           Snacks.toggle.treesitter():map("<leader>uT")
           Snacks.toggle.option("background", { off = "light", on = "dark", name = "Dark Background" }):map("<leader>ub")
           Snacks.toggle.inlay_hints():map("<leader>uh")
@@ -485,7 +492,7 @@ return {
       },
       {
         -- Open in the current working directory
-        "<leader>cw",
+        "<leader>yw",
         "<cmd>Yazi cwd<cr>",
         desc = "Open the file manager in nvim's working directory",
       },
@@ -495,6 +502,7 @@ return {
         desc = "Resume the last yazi session",
       },
     },
+    ---@module 'yazi'
     ---@type YaziConfig | {}
     opts = {
       -- if you want to open yazi instead of netrw, see below for more info
