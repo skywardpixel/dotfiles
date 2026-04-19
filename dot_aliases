@@ -1,3 +1,5 @@
+# vi: ft=zsh
+
 alias cp='cp -iv'
 alias mv='mv -iv'
 alias mkdir='mkdir -pv'
@@ -7,5 +9,4 @@ alias shortdate="date +%Y%m%d%H%M%S"
 alias r4='rchar 4'
 alias gettemp='cd $(mktemp -d)'
 alias n='nvim'
-alias nr='nvim -c "lua Snacks.picker.recent()"'
-alias nf='nvim -c "lua Snacks.picker.files()"'
+alias e='$EDITOR'

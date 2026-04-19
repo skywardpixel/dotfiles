@@ -1,9 +1,7 @@
 return {
   {
     "folke/sidekick.nvim",
-    opts = {
-      -- add any options here
-    },
+    opts = {},
     keys = {
       {
         "<tab>",
@@ -18,8 +16,8 @@ return {
       },
       {
         "<c-.>",
-        function() require("sidekick.cli").toggle() end,
-        desc = "Sidekick Toggle",
+        function() require("sidekick.cli").focus() end,
+        desc = "Sidekick Focus",
         mode = { "n", "t", "i", "x" },
       },
       {
@@ -29,7 +27,9 @@ return {
       },
       {
         "<leader>as",
-        function() require("sidekick.cli").select({ filter = { installed = true } }) end,
+        function() require("sidekick.cli").select() end,
+        -- Or to select only installed tools:
+        -- require("sidekick.cli").select({ filter = { installed = true } })
         desc = "Select CLI",
       },
       {
