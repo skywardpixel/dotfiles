@@ -44,17 +44,18 @@ antidote load
 
 ##### ZLE AND KEYBINDS #####
 
-# Press 'V' in vi mode to edit buffer in editor
+# Use the emacs keymap for compatibility
+bindkey -e
+
+# Press 'C-x C-e' in vi mode to edit buffer in editor
 autoload edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
-# Press 'ctrl-y' to copy buffer
-copybuffer() { pbcopy <<< $BUFFER }
-zle -N copybuffer
-bindkey -M vicmd '^Y' copybuffer
-bindkey -M viins '^Y' copybuffer
-bindkey -M emacs '^Y' copybuffer
+# Press 'C-x y' to copy buffer to clipboard
+copy-buffer-to-clipboard() { pbcopy <<< $BUFFER }
+zle -N copy-buffer-to-clipboard
+bindkey '^Xy' copy-buffer-to-clipboard
 
 ##### MISC PLUGINS (after Antidote) #####
 
