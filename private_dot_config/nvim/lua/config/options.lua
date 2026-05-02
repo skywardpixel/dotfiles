@@ -4,6 +4,11 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.opt.termguicolors = true
 
+-- Auto read/write
+vim.o.autowrite = true
+vim.o.autowriteall = true
+vim.o.autoread = true
+
 -- Line numbers
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -33,3 +38,6 @@ vim.opt.breakindent = true
 vim.opt.scrolloff = 4
 vim.opt.sidescrolloff = 8
 vim.opt.smoothscroll = true
+
+-- Completion options
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
