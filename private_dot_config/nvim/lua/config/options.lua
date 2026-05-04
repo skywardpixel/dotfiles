@@ -4,10 +4,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.opt.termguicolors = true
 
--- Auto read/write
-vim.o.autowrite = true
-vim.o.autowriteall = true
-vim.o.autoread = true
+-- Auto read
+vim.opt.autoread = true
 
 -- Line numbers
 vim.opt.number = true
