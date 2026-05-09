@@ -17,26 +17,33 @@ return {
   },
 
   {
+    "nvim-mini/mini.splitjoin",
+    version = "*",
+    opts = {},
+  },
+
+  {
     "nvim-mini/mini.pairs",
     version = "*",
+    opts = {},
+  },
+
+  {
+    "nvim-mini/mini.surround",
+    version = "*",
+    opts = {},
   },
 
   {
     "folke/persistence.nvim",
     event = "BufReadPre", -- this will only start session saving when an actual file was opened
-    opts = {
-      -- add any custom options here
-    },
+    opts = {},
   },
 
   {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
-    opts = {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-    },
+    opts = {},
   },
 
   {

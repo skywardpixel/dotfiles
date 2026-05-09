@@ -2,12 +2,17 @@
 mattmc3/ez-compinit
 
 # Core prompt and interactive plugins
+mattmc3/zephyr path:plugins/completion
+mattmc3/zephyr path:plugins/compstyle
 mattmc3/zephyr path:plugins/color
+mattmc3/zephyr path:plugins/directory
 mattmc3/zephyr path:plugins/editor
+mattmc3/zephyr path:plugins/environment
 mattmc3/zephyr path:plugins/history
+mattmc3/zephyr path:plugins/utility
+mattmc3/zephyr path:plugins/zfunctions
 romkatv/powerlevel10k
 olets/zsh-abbr
-Aloxaf/fzf-tab
 
 # Keep at the bottom
 zsh-users/zsh-autosuggestions

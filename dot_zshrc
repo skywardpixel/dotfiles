@@ -7,37 +7,24 @@ fi
 
 ##### ENVIRONMENT #####
 
-export EDITOR=nvim
-export VISUAL=nvim
-export GPG_TTY=$(tty)
-
-# Set up homebrew's paths again, because macOS path_helper messes with $PATH after
-# ~/.zshenv is sourced.
-[[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
-# Prepend custom path again.
-typeset -U path
-path=("$HOME/.local/bin" "$HOME/.cargo/bin" $path)
+EDITOR=nvim
+VISUAL=nvim
+GPG_TTY=$(tty)
 
 # Use osc52.sh as pbcopy if in a remote session.
 if [[ -n "$SSH_TTY" ]]; then
   alias pbcopy='osc52.sh'
 fi
 
-##### FUNCTIONS AND COMPLETIONS (before Antidote) #####
-
-fpath=($HOME/.config/zsh/functions $HOME/.config/zsh/completions $fpath)
-autoload -Uz y
-
 ##### ANTIDOTE ######
 
-# fzf-tab
-zstyle ':completion:*:git-checkout:*' sort false
-zstyle ':completion:*:descriptions' format '[%d]'
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
-zstyle ':fzf-tab:*' switch-group '<' '>'
+# Zephyr
+zstyle ':zephyr:plugin:environment' 'prepath' \
+  $HOME/.local/bin \
+  $HOME/.cargo/bin
+
+# zsh-abbr
+ABBR_SET_EXPANSION_CURSOR=1
 
 source ~/.antidote/antidote.zsh
 antidote load
@@ -64,9 +51,10 @@ if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
   source /usr/share/doc/fzf/examples/key-bindings.zsh
   source /usr/share/doc/fzf/examples/completion.zsh
 fi
-
-eval "$(zoxide init zsh)"
 source <(fzf --zsh)
+
+# zoxide (replace cd)
+eval "$(zoxide init zsh --cmd cd)"
 
 ##### CUSTOM ALIASES #####
 

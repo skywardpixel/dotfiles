@@ -40,6 +40,7 @@ return {
     config = function(_, opts)
       require("mini.diff").setup(opts)
       vim.keymap.set("n", "<leader>vo", function()
+        ---@diagnostic disable-next-line: missing-parameter
         MiniDiff.toggle_overlay()
       end, { desc = "Diff Overlay" })
     end,

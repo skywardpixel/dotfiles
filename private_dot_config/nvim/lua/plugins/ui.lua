@@ -31,6 +31,8 @@ return {
         mode = { "n", "x" },
         { "<leader>a", group = "agent", icon = "" },
         { "<leader>f", group = "file/find" },
+        { "<leader>b", group = "buffer" },
+        { "<leader><tab>", group = "tab" },
         { "<leader>g", group = "git" },
         { "<leader>s", group = "search" },
         { "<leader>u", group = "ui" },
@@ -58,8 +60,8 @@ return {
     ---@type snacks.Config
     opts = {
       bigfile = { enabled = true },
-      dashboard = { enabled = true },
       explorer = { enabled = true },
+      dashboard = { enabled = true },
       indent = { enabled = true },
       input = { enabled = true },
       picker = { enabled = true },

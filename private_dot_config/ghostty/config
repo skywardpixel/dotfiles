@@ -6,12 +6,13 @@ adjust-cell-height = 2
 theme = TokyoNight
 background-opacity = 0.8
 background-blur = macos-glass-regular
-macos-titlebar-style = transparent
+macos-titlebar-style = native
 macos-icon = blueprint
 window-padding-x = 10
 window-padding-y = 8
 window-save-state = always
 window-theme = auto
+custom-shader = ~/.config/ghostty/shaders/cursor_blaze.glsl
 
 # Terminal
 
