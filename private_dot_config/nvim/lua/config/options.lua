@@ -4,8 +4,9 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.opt.termguicolors = true
 
--- Auto read
+-- Auto read/write
 vim.opt.autoread = true
+vim.opt.autowrite = true
 
 -- Line numbers
 vim.opt.number = true
@@ -39,3 +40,16 @@ vim.opt.smoothscroll = true
 
 -- Completion options
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
+
+-- Show inline diagnostics
+vim.diagnostic.config({
+  virtual_text = true,
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = "",
+      [vim.diagnostic.severity.WARN] = "",
+      [vim.diagnostic.severity.INFO] = "",
+      [vim.diagnostic.severity.HINT] = "",
+    },
+  },
+})

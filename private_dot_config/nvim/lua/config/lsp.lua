@@ -1,2 +1,2 @@
--- Add vim.lsp.enable calls here
-vim.lsp.enable({ "lua_ls", "pyright", "clangd" })
+local lsps = { "stylua", "lua_ls", "clangd", "pyright", "gopls" }
+vim.lsp.enable(lsps)
