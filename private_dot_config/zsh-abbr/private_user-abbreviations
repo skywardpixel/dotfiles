@@ -1,7 +1,6 @@
 abbr "bubu"="brew update && brew upgrade"
-abbr "cea"="chezmoi edit --apply"
-abbr "cra"="chezmoi re-add"
 abbr "cz"="chezmoi"
+abbr "czea"="chezmoi edit --apply"
 abbr "czra"="chezmoi re-add"
 abbr "czu"="chezmoi update"
 abbr "n"="nvim"

@@ -11,6 +11,9 @@
 [pull]
 	ff = only
 
+[merge]
+	tool = nvimdiff
+
 [alias]
 	s = status --short --branch
 	st = status --short --branch

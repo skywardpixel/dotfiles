@@ -4,8 +4,8 @@ alias cp='cp -iv'
 alias mv='mv -iv'
 alias mkdir='mkdir -pv'
 alias path='echo -e ${PATH//:/\\n}'
-alias du="ncdu --color dark -rr -x --exclude .git --exclude node_modules"
-alias ls="eza" # ls
+alias du='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
+alias ls='eza' # ls
 alias ll='eza -lbF --git' # list, size, type, git
 alias llm='eza -lbGd --git --sort=modified' # long list, modified date sort
 alias la='eza -lbhHigUmuSa --time-style=long-iso --git --color-scale' # all list
