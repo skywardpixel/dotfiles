@@ -38,12 +38,9 @@ vim.opt.scrolloff = 4
 vim.opt.sidescrolloff = 8
 vim.opt.smoothscroll = true
 
--- Completion options
-vim.opt.completeopt = { "menu", "menuone", "noselect" }
-
 -- Show inline diagnostics
 vim.diagnostic.config({
-  virtual_text = true,
+  virtual_text = false,
   signs = {
     text = {
       [vim.diagnostic.severity.ERROR] = "",

@@ -16,12 +16,11 @@ return {
 
   {
     "nvim-mini/mini.diff",
-    opts = function(_, opts)
+    config = function(_, opts)
+      require("mini.diff").setup(opts)
       Snacks.toggle({
         name = "Mini Diff Signs",
-        get = function()
-          return vim.g.minidiff_disable ~= true
-        end,
+        get = function() return vim.g.minidiff_disable ~= true end,
         set = function(state)
           vim.g.minidiff_disable = not state
           if state then
@@ -30,15 +29,9 @@ return {
             require("mini.diff").disable(0)
           end
           -- HACK: redraw to update the signs
-          vim.defer_fn(function()
-            vim.cmd([[redraw!]])
-          end, 200)
+          vim.defer_fn(function() vim.cmd([[redraw!]]) end, 200)
         end,
       }):map("<leader>uG")
-      return opts
-    end,
-    config = function(_, opts)
-      require("mini.diff").setup(opts)
       vim.keymap.set("n", "<leader>vo", function()
         ---@diagnostic disable-next-line: missing-parameter
         MiniDiff.toggle_overlay()

@@ -1,21 +1,17 @@
 return {
   {
-    "saghen/blink.cmp",
-    dependencies = { "rafamadriz/friendly-snippets" },
-    version = "1.*",
-    ---@module 'blink.cmp'
-    ---@type blink.cmp.Config
-    opts = {
-      keymap = { preset = "default" },
-      appearance = {
-        nerd_font_variant = "normal",
-      },
-      completion = { documentation = { auto_show = false } },
-      sources = {
-        default = { "lsp", "path", "snippets", "buffer" },
-      },
-      fuzzy = { implementation = "prefer_rust_with_warning" },
-    },
-    opts_extend = { "sources.default" },
+    "nvim-mini/mini.completion",
+    version = "*",
+    opts = {},
+    config = function(_, opts)
+      require("mini.completion").setup(opts)
+      -- Disable mini.completion in Snacks picker
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "snacks_picker_input",
+        desc = "Disable mini.completion for Snacks picker",
+        group = vim.api.nvim_create_augroup("user_mini", {}),
+        command = "lua vim.b.minicompletion_disable=true",
+      })
+    end,
   },
 }
