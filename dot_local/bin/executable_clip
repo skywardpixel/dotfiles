@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Smart clipboard router
+if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+  if command -v osc52.sh >/dev/null 2>&1; then
+    osc52.sh
+  else
+    echo "Error: osc52.sh not found in PATH" >&2
+  fi
+elif command -v pbcopy >/dev/null 2>&1; then
+  pbcopy
+elif command -v xclip >/dev/null 2>&1; then
+  xclip -selection clipboard
+else
+  echo "No clipboard tool found." >&2
+fi

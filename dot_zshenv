@@ -1,4 +1,5 @@
 typeset -U path
 path=("$HOME/.local/bin" "$HOME/.cargo/bin" $path)
 
+[[ -f ~/.env ]] && source ~/.env
 [[ -f ~/.env.local ]] && source ~/.env.local
