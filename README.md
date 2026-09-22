@@ -45,3 +45,34 @@ make restow
 # Unstow:
 make unstow
 ```
+
+---
+
+## 🔄 Updating
+
+Releases are published as ordinary commits on top of each other, so a plain pull works:
+
+```bash
+git pull
+make restow     # pick up any files that were added, moved or removed
+```
+
+`make restow` matters: `git pull` updates the repository, but symlinks for
+newly added files are only created when you restow.
+
+<details>
+<summary>If <code>git pull</code> refuses to merge</summary>
+
+Releases before 2026-09-22 were published as unrelated orphan commits, so a clone
+from that era has no common ancestor with current `main`. Re-sync once with:
+
+```bash
+git fetch origin
+git reset --hard origin/main
+make restow
+```
+
+This discards local modifications to tracked files. Keep your own changes in
+`*.local` files instead — `.zshrc` and friends source them if present, and they
+are not tracked here.
+</details>
