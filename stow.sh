@@ -36,6 +36,8 @@ FORCE=false
 RUN_DEPS=false
 RUN_UPDATE=false
 SELECTED_PKGS=()
+# Distinguishes "user asked for nothing" from "user asked, nothing matched".
+SELECTOR_GIVEN=false
 
 show_help() {
   cat <<HELP
@@ -93,16 +95,19 @@ HELP
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --core)
+      SELECTOR_GIVEN=true
       SELECTED_PKGS+=("${CORE_PKGS[@]}")
       shift
       ;;
     --google)
+      SELECTOR_GIVEN=true
       # Expansion is guarded: GOOGLE_PKGS is empty in a public checkout and
       # "${arr[@]}" on an empty array trips set -u in older bash.
       SELECTED_PKGS+=(${GOOGLE_PKGS[@]+"${GOOGLE_PKGS[@]}"})
       shift
       ;;
     --all)
+      SELECTOR_GIVEN=true
       SELECTED_PKGS+=("${CORE_PKGS[@]}" ${GOOGLE_PKGS[@]+"${GOOGLE_PKGS[@]}"})
       shift
       ;;
@@ -169,6 +174,7 @@ while [[ $# -gt 0 ]]; do
       exit 1
       ;;
     *)
+      SELECTOR_GIVEN=true
       SELECTED_PKGS+=("$1")
       shift
       ;;
@@ -176,6 +182,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ ${#SELECTED_PKGS[@]} -eq 0 ]]; then
+  if [[ "${SELECTOR_GIVEN}" == true ]]; then
+    # A selector was given but matched nothing -- e.g. --google in a public
+    # checkout, which has no work packages. Silently falling back to --core
+    # here would stow something the user did not ask for.
+    echo "No packages matched the given selection; nothing to do."
+    exit 0
+  fi
   echo "No packages specified. Defaulting to --core."
   SELECTED_PKGS+=("${CORE_PKGS[@]}")
 fi
