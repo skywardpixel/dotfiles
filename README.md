@@ -44,6 +44,11 @@ make restow
 
 # Unstow:
 make unstow
+
+# Check for drift -- symlinks an application has silently replaced with a
+# regular file (some apps rewrite their own config via a temp file + rename,
+# which destroys the symlink and orphans the copy in this repo):
+make status
 ```
 
 ---
