@@ -1,0 +1,6 @@
+abbr "bubu"="brew update && brew upgrade"
+abbr "jco"="jj commit -m \"%\""
+abbr "jn"="jj next"
+abbr "jnew"="jj new"
+abbr "jp"="jj prev"
+abbr "n"="nvim"

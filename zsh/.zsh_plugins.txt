@@ -1,0 +1,12 @@
+# Antidote plugin bundle.
+#
+# Deliberately short. Everything Zephyr used to provide (shell options, history,
+# completion setup and styling, keybinds) now lives directly in .zshrc, and the
+# prompt is ~/.config/zsh/prompt.zsh.
+
+olets/zsh-abbr
+
+# Keep at the bottom: these two must be loaded after everything else.
+zsh-users/zsh-autosuggestions
+zdharma-continuum/fast-syntax-highlighting
+olets/zsh-autosuggestions-abbreviations-strategy
