@@ -106,6 +106,22 @@ fi
 
 ABBR_SET_EXPANSION_CURSOR=1
 
+# zsh-abbr persists abbreviations by writing a temp file and rename(2)-ing it
+# over its storage file. rename(2) replaces the path, so if that path is a
+# symlink the symlink is destroyed and the dotfiles repo silently stops
+# receiving updates. Point zsh-abbr straight at the file inside the checkout
+# instead, so there is no symlink in the way and `abbr add` shows up in
+# `git status`.
+#
+# %x is the file currently being sourced (this .zshrc) and :A resolves it
+# through the symlink, giving the checkout's zsh/ directory. If .zshrc is a
+# real file in $HOME rather than a symlink this resolves to zsh-abbr's own
+# default path, so the override is a harmless no-op.
+() {
+  local abbr_file=${${(%):-%x}:A:h}/.config/zsh-abbr/user-abbreviations
+  [[ -f $abbr_file ]] && export ABBR_USER_ABBREVIATIONS_FILE=$abbr_file
+}
+
 source ~/.antidote/antidote.zsh
 antidote load
 
