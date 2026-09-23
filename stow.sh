@@ -493,6 +493,18 @@ def sync_copy(pkg, rel_path, src_file, dest_file):
     write_state(pkg, rel_posix, sha256(src_file))
     print(f"  Synced: {dest_file} -> {src_file}")
 
+def via_folded_dir(dest_file, src_file):
+    """True if dest is reached through a symlinked parent directory into the repo.
+
+    GNU Stow "folds" a directory owned by a single package into one symlink, so
+    the files beneath it are not symlinks themselves -- they *are* the repo
+    files. Treating them as regular files would report false drift, and with -f
+    would delete the repo file and replace it with a symlink to itself.
+    """
+    return (not dest_file.is_symlink() and dest_file.exists()
+            and os.path.realpath(dest_file) == os.path.realpath(src_file))
+
+
 findings = []  # (severity, package, message) -- collected for 'status'
 
 for pkg in pkgs:
@@ -535,7 +547,9 @@ for pkg in pkgs:
                     if note:
                         findings.append((note[0], pkg, f"copy   {rel_posix}: {note[1]}"))
                 else:
-                    if dest_file.is_symlink():
+                    if via_folded_dir(dest_file, src_file):
+                        pass
+                    elif dest_file.is_symlink():
                         if os.path.realpath(dest_file) != str(src_file.resolve()):
                             findings.append(
                                 (1, pkg, f"link   {rel_posix}: symlink points elsewhere "
@@ -571,7 +585,9 @@ for pkg in pkgs:
 
             if action in ("stow", "restow"):
                 dest_file.parent.mkdir(parents=True, exist_ok=True)
-                if copy_mode:
+                if via_folded_dir(dest_file, src_file):
+                    print(f"  Already linked (folded directory): {dest_file}")
+                elif copy_mode:
                     deploy_copy(pkg, rel_path, src_file, dest_file)
                 elif dest_file.is_symlink():
                     if dest_file.resolve() == src_file.resolve():
