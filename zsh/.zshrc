@@ -92,10 +92,12 @@ zstyle ':completion:*' cache-path ${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompcache
 # rather than the other way round.
 
 source ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.zsh
-[[ -f ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.google.zsh ]] &&
+if [[ -f ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.google.zsh ]]; then
   source ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.google.zsh
-[[ -f ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.local.zsh ]] &&
+fi
+if [[ -f ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.local.zsh ]]; then
   source ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.local.zsh
+fi
 prompt_enable_transient
 
 ##### PLUGINS ##################################################################
@@ -119,7 +121,9 @@ ABBR_SET_EXPANSION_CURSOR=1
 # default path, so the override is a harmless no-op.
 () {
   local abbr_file=${${(%):-%x}:A:h}/.config/zsh-abbr/user-abbreviations
-  [[ -f $abbr_file ]] && export ABBR_USER_ABBREVIATIONS_FILE=$abbr_file
+  if [[ -f $abbr_file ]]; then
+    export ABBR_USER_ABBREVIATIONS_FILE=$abbr_file
+  fi
 }
 
 source ~/.antidote/antidote.zsh
@@ -182,9 +186,15 @@ if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
   source /usr/share/doc/fzf/examples/key-bindings.zsh
   source /usr/share/doc/fzf/examples/completion.zsh
 fi
-(( $+commands[fzf] ))    && source <(fzf --zsh)
-(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
-(( $+commands[mise] ))   && eval "$(mise activate zsh)"
+if (( $+commands[fzf] )); then
+  source <(fzf --zsh)
+fi
+if (( $+commands[zoxide] )); then
+  eval "$(zoxide init zsh)"
+fi
+if (( $+commands[mise] )); then
+  eval "$(mise activate zsh)"
+fi
 
 ##### ALIASES ##################################################################
 #

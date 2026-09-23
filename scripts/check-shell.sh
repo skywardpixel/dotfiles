@@ -101,6 +101,25 @@ else
   printf '%s\n' "$STARTUP_STDERR" | sed 's/^/        /' >&2
 fi
 
+# Also verify the isolated public (--core only) startup path in a clean sandbox
+# without any google-* overlay files, so a passing $HOME check on a work machine
+# (where ~/.aliases.google is stowed) cannot mask a failure in the public config.
+SANDBOX_HOME="$(mktemp -d)"
+./stow.py --core -t "$SANDBOX_HOME" >/dev/null 2>&1
+if [[ -d "$HOME/.antidote" ]]; then
+  ln -s "$HOME/.antidote" "$SANDBOX_HOME/.antidote"
+fi
+CORE_STDERR="$(HOME="$SANDBOX_HOME" ZDOTDIR="$SANDBOX_HOME" zsh -d -i -c exit 2>&1 >/dev/null)"
+CORE_STATUS=$?
+rm -rf "$SANDBOX_HOME"
+
+if (( CORE_STATUS == 0 )) && [[ -z "$CORE_STDERR" ]]; then
+  printf 'ok    core-only startup: 0, empty stderr (isolated public sandbox)\n'
+else
+  fail "core-only startup: status=$CORE_STATUS (expected 0, empty stderr)"
+  [[ -n "$CORE_STDERR" ]] && printf '%s\n' "$CORE_STDERR" | sed 's/^/        /' >&2
+fi
+
 ##### 4. OPTIONAL OVERLAY CHECKS ##############################################
 #
 # When the work overlay branch ('google') is checked out, scripts/check-google.py
