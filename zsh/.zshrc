@@ -187,5 +187,12 @@ fi
 (( $+commands[mise] ))   && eval "$(mise activate zsh)"
 
 ##### ALIASES ##################################################################
+#
+# This is the last thing startup runs, and zsh hands its status to the first
+# prompt -- so `exec zsh` reporting non-zero is a real signal, not noise. Note
+# the `if`: `[[ -f ... ]] && source ...` would report a *missing* optional file
+# as a failure, which is what made `exec zsh` return 1 before.
 
-[[ -f ~/.aliases ]] && source ~/.aliases
+if [[ -f ~/.aliases ]]; then
+  source ~/.aliases
+fi

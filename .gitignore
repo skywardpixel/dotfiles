@@ -1,0 +1,6 @@
+# Hashes of what stow.sh last deployed for copy-mode files (see .stow-copy).
+# Machine-local: records the state of *this* machine's $HOME, not the repo.
+.stow-state/
+
+# vim-plug drops this beside plug.vim on :PlugUpgrade.
+*.old

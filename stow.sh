@@ -59,6 +59,8 @@ Options:
   -s, --status   Report drift: de-linked symlinks and out-of-sync copy-mode files
       --sync     Copy-mode files only: pull app-written changes from \$HOME back into the repo
   -l, --list     List available packages
+      --list-packages [core|google|all]
+                 Same list, machine-readable: bare names, one per line
   -n, --dry-run  Dry-run (show what would be done without doing it)
   -t, --target   Target directory (default: $HOME)
   -h, --help     Show this help message
@@ -150,6 +152,30 @@ while [[ $# -gt 0 ]]; do
       if (( ${#GOOGLE_PKGS[@]} )); then
         echo "Google Packages: ${GOOGLE_PKGS[*]}"
       fi
+      exit 0
+      ;;
+    --list-packages)
+      # Machine-readable counterpart to -l: bare names, one per line, no
+      # headings. Used by verification scripts so the package list stays
+      # defined in one place -- here.
+      case "${2:-all}" in
+        core)
+          printf '%s\n' "${CORE_PKGS[@]}"
+          ;;
+        google)
+          # printf with zero arguments still emits one empty line, so guard.
+          if (( ${#GOOGLE_PKGS[@]} )); then
+            printf '%s\n' "${GOOGLE_PKGS[@]}"
+          fi
+          ;;
+        all)
+          printf '%s\n' "${CORE_PKGS[@]}" ${GOOGLE_PKGS[@]+"${GOOGLE_PKGS[@]}"}
+          ;;
+        *)
+          echo "Unknown package set: $2 (expected core, google or all)" >&2
+          exit 1
+          ;;
+      esac
       exit 0
       ;;
     --sync)

@@ -15,6 +15,13 @@ alias lx='eza -lbhHigUmuSa@ --time-style=long-iso --git --color-scale' # all + e
 alias lS='eza -1' # one column, just names
 alias lt='eza --tree --level=2' # tree
 
-# Custom / local alias overrides
-[[ -f ~/.aliases.google ]] && source ~/.aliases.google
-[[ -f ~/.aliases.local ]] && source ~/.aliases.local
+# Custom / local alias overrides. Spelled as `if` rather than `[[ ... ]] &&`
+# because the latter reports a *missing* optional file as a failure, and that
+# status escapes through `source` into whatever sourced this file. A file that
+# exists but fails while sourcing still reports its real status.
+if [[ -f ~/.aliases.google ]]; then
+  source ~/.aliases.google
+fi
+if [[ -f ~/.aliases.local ]]; then
+  source ~/.aliases.local
+fi
