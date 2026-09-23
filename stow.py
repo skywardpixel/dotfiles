@@ -19,6 +19,7 @@ CORE_PKGS = [
     "ghostty",
     "git",
     "helix",
+    "herdr",
     "nvim",
     "ssh",
     "tmux",

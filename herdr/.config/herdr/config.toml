@@ -1,0 +1,12 @@
+onboarding = false
+
+[theme]
+name = "tokyo-night"
+auto_switch = false
+
+[keys]
+# Fast workspace navigation shortcuts
+switch_workspace = "prefix+shift+1..9"
+next_workspace = "prefix+shift+j"
+previous_workspace = "prefix+shift+k"
+workspace_picker = "prefix+shift+w"

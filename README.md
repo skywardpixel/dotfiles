@@ -12,6 +12,7 @@ A clean, modular cross-platform dotfiles configuration managed with [GNU Stow](h
 - **`ghostty/`**: Terminal configuration with TokyoNight styling.
 - **`git/`**: Git config with sensible aliases and global ignore.
 - **`helix/`**: Modal editor settings.
+- **`herdr/`**: Herdr terminal workspace manager configuration (`tokyo-night` theme and workspace keybindings).
 - **`nvim/`**: Neovim configuration (Lazy.nvim, plugins, options, keymaps, ftplugins).
 - **`ssh/`**: SSH base config with `Include ~/.ssh/conf.d/*`.
 - **`tmux/`**: Tmux configuration with TokyoNight styling and sensible defaults.

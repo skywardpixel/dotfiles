@@ -109,6 +109,10 @@ SANDBOX_HOME="$(mktemp -d)"
 if [[ -d "$HOME/.antidote" ]]; then
   ln -s "$HOME/.antidote" "$SANDBOX_HOME/.antidote"
 fi
+if [[ -d "${XDG_CACHE_HOME:-$HOME/.cache}/antidote" ]]; then
+  mkdir -p "$SANDBOX_HOME/.cache"
+  ln -s "${XDG_CACHE_HOME:-$HOME/.cache}/antidote" "$SANDBOX_HOME/.cache/antidote"
+fi
 CORE_STDERR="$(HOME="$SANDBOX_HOME" ZDOTDIR="$SANDBOX_HOME" zsh -d -i -c exit 2>&1 >/dev/null)"
 CORE_STATUS=$?
 rm -rf "$SANDBOX_HOME"
