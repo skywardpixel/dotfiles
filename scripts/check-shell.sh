@@ -77,7 +77,7 @@ fi
 if [[ -L "$HOME/.zshrc" && "$(readlink -f "$HOME/.zshrc")" == "$DOTFILES_DIR"/* ]]; then
   DEPLOYED="this checkout"
 else
-  DEPLOYED="NOT this checkout -- run ./stow.sh zsh"
+  DEPLOYED="NOT this checkout -- run ./stow.py zsh"
 fi
 
 # `-c exit` exits with whatever $? already was, i.e. the status startup left
@@ -103,12 +103,12 @@ fi
 
 ##### 4. OPTIONAL OVERLAY CHECKS ##############################################
 #
-# When the work overlay branch ('google') is checked out, scripts/check-google.sh
+# When the work overlay branch ('google') is checked out, scripts/check-google.py
 # verifies that the 'main' base branch and core packages contain zero internal
 # references, zero overlay files, and no private @google.com commit emails.
 
-if [[ -x "$SCRIPT_DIR/check-google.sh" ]]; then
-  if ! "$SCRIPT_DIR/check-google.sh"; then
+if [[ -x "$SCRIPT_DIR/check-google.py" ]]; then
+  if ! "$SCRIPT_DIR/check-google.py"; then
     FAILURES=$((FAILURES + 1))
   fi
 fi

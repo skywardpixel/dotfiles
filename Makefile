@@ -1,19 +1,19 @@
 .PHONY: help all core google restow unstow list dry-run status sync check \
         deps deps-core deps-google deps-all update update-core update-google update-all
 
-# This Makefile is a thin alias layer over ./stow.sh -- it deliberately holds no
-# package lists of its own. stow.sh owns the package sets (core inline, work in
+# This Makefile is a thin alias layer over ./stow.py -- it deliberately holds no
+# package lists of its own. stow.py owns the package sets (core inline, work in
 # packages.google), the symlink/copy logic and the drift tracking, so adding or
 # removing a package is a one-line change there rather than an edit in two files
 # that can silently disagree.
 #
 # Anything expressible here is expressible directly:
-#   make core  ==  ./stow.sh --core
-# Use ./stow.sh when you need flags this layer does not surface (-f, -t, or a
+#   make core  ==  ./stow.py --core
+# Use ./stow.py when you need flags this layer does not surface (-f, -t, or a
 # specific package name).
 
 TARGET ?= $(HOME)
-STOW = ./stow.sh -t $(TARGET)
+STOW = ./stow.py -t $(TARGET)
 
 help:
 	@echo "Modular Dotfiles"
@@ -52,7 +52,7 @@ endif
 	@echo "  make update-<pkg> - Update dependencies for a specific package (e.g. make update-tmux)"
 	@echo ""
 	@echo "For flags this layer does not surface (-f, -t, or a subset of packages):"
-	@echo "  ./stow.sh -h"
+	@echo "  ./stow.py -h"
 
 core:
 	$(STOW) --core
@@ -87,27 +87,27 @@ check:
 	@./scripts/check-shell.sh
 
 list:
-	@./stow.sh --list
+	@./stow.py --list
 
 deps: deps-all
 deps-all:
-	@./stow.sh --deps-only --all
+	@./stow.py --deps-only --all
 deps-core:
-	@./stow.sh --deps-only --core
+	@./stow.py --deps-only --core
 deps-google:
-	@./stow.sh --deps-only --google
+	@./stow.py --deps-only --google
 
 update: update-all
 update-all:
-	@./stow.sh --update-only --all
+	@./stow.py --update-only --all
 update-core:
-	@./stow.sh --update-only --core
+	@./stow.py --update-only --core
 update-google:
-	@./stow.sh --update-only --google
+	@./stow.py --update-only --google
 
 # Single package, e.g. `make deps-vim` / `make update-tmux`. Explicit rules
 # above take precedence, so deps-core/-google/-all are unaffected.
 deps-%:
-	@./stow.sh --deps-only $*
+	@./stow.py --deps-only $*
 update-%:
-	@./stow.sh --update-only $*
+	@./stow.py --update-only $*
