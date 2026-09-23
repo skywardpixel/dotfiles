@@ -80,10 +80,13 @@ else
   DEPLOYED="NOT this checkout -- run ./stow.py zsh"
 fi
 
-# `-c exit` exits with whatever $? already was, i.e. the status startup left
-# behind. Capture stderr while discarding stdout: the 2>&1 must come first so
-# it duplicates the still-captured stdout, before stdout goes to /dev/null.
-STARTUP_STDERR="$(zsh -i -c exit 2>&1 >/dev/null)"
+# Capture startup $? first, then emit a canary token on fd 2. This catches both
+# directions of stderr breakage:
+#   - Extra text before the canary => startup printed an error/warning.
+#   - Missing canary               => startup closed or redirected fd 2.
+STDERR_CANARY="__STDERR_INTACT__"
+STARTUP_Probe='s=$?; print -r -u2 -- '"'$STDERR_CANARY'"'; exit $s'
+STARTUP_STDERR="$(zsh -i -c "$STARTUP_Probe" 2>&1 >/dev/null)"
 STARTUP_STATUS=$?
 
 if (( STARTUP_STATUS == 0 )); then
@@ -94,11 +97,13 @@ else
   echo "        zsh -i -x -c 'print \$?' 2>&1 | tail -20" >&2
 fi
 
-if [[ -z "$STARTUP_STDERR" ]]; then
-  printf 'ok    startup stderr: empty\n'
+if [[ "$STARTUP_STDERR" == "$STDERR_CANARY" ]]; then
+  printf 'ok    startup stderr: empty and fd 2 intact\n'
+elif [[ -z "$STARTUP_STDERR" ]]; then
+  fail "startup stderr: fd 2 was closed or redirected to /dev/null during startup"
 else
   fail "startup stderr: not empty"
-  printf '%s\n' "$STARTUP_STDERR" | sed 's/^/        /' >&2
+  printf '%s\n' "${STARTUP_STDERR%"$STDERR_CANARY"}" | sed 's/^/        /' >&2
 fi
 
 # Also verify the isolated public (--core only) startup path in a clean sandbox
@@ -113,18 +118,62 @@ if [[ -d "${XDG_CACHE_HOME:-$HOME/.cache}/antidote" ]]; then
   mkdir -p "$SANDBOX_HOME/.cache"
   ln -s "${XDG_CACHE_HOME:-$HOME/.cache}/antidote" "$SANDBOX_HOME/.cache/antidote"
 fi
-CORE_STDERR="$(HOME="$SANDBOX_HOME" ZDOTDIR="$SANDBOX_HOME" zsh -d -i -c exit 2>&1 >/dev/null)"
+CORE_STDERR="$(HOME="$SANDBOX_HOME" ZDOTDIR="$SANDBOX_HOME" zsh -d -i -c "$STARTUP_Probe" 2>&1 >/dev/null)"
 CORE_STATUS=$?
 rm -rf "$SANDBOX_HOME"
 
-if (( CORE_STATUS == 0 )) && [[ -z "$CORE_STDERR" ]]; then
-  printf 'ok    core-only startup: 0, empty stderr (isolated public sandbox)\n'
+if (( CORE_STATUS == 0 )) && [[ "$CORE_STDERR" == "$STDERR_CANARY" ]]; then
+  printf 'ok    core-only startup: 0, empty stderr, fd 2 intact (isolated public sandbox)\n'
 else
-  fail "core-only startup: status=$CORE_STATUS (expected 0, empty stderr)"
-  [[ -n "$CORE_STDERR" ]] && printf '%s\n' "$CORE_STDERR" | sed 's/^/        /' >&2
+  fail "core-only startup: status=$CORE_STATUS (expected 0, empty stderr, fd 2 intact)"
+  [[ -n "$CORE_STDERR" && "$CORE_STDERR" != "$STDERR_CANARY" ]] &&
+    printf '%s\n' "${CORE_STDERR%"$STDERR_CANARY"}" | sed 's/^/        /' >&2
 fi
 
-##### 4. OPTIONAL OVERLAY CHECKS ##############################################
+##### 4. PROMPT ASYNC & FD INVARIANTS ##########################################
+#
+# `zsh -i -c exit` exits before precmd/zle callbacks ever fire, AND a check
+# that only asserts "stderr is empty" is trivially satisfied if a prompt hook
+# accidentally redirects fd 2 to /dev/null (e.g. a bare `exec {fd}<&- 2>/dev/null`).
+# Exercise both `_pr_async_done` and `_pr_async_stop` inside this git repo and
+# verify that:
+#   - `_pr_fd` is allocated and cleanly closed (no FD leak),
+#   - `PROMPT_VCS` is populated by the async worker, and
+#   - interactive `stderr` (fd 2) still delivers output afterward.
+
+PROMPT_CHECK_OUT="$(
+  zsh -f -c '
+    source ./zsh/.config/zsh/prompt.zsh || exit 10
+    # 1. Start async worker via precmd and let _pr_async_done harvest it.
+    _pr_precmd
+    (( _pr_fd > 2 )) || exit 11
+    local fd1=$_pr_fd
+    _pr_async_done $_pr_fd
+    (( _pr_fd == 0 )) || exit 12
+    [[ ! -e /dev/fd/$fd1 ]] || exit 13
+    [[ -n $PROMPT_VCS ]] || exit 14
+
+    # 2. Start a second async worker and exercise the _pr_async_stop path.
+    _pr_precmd
+    (( _pr_fd > 2 )) || exit 15
+    local fd2=$_pr_fd
+    _pr_async_stop
+    (( _pr_fd == 0 )) || exit 16
+    [[ ! -e /dev/fd/$fd2 ]] || exit 17
+
+    # 3. Prove fd 2 (stderr) was not redirected to /dev/null.
+    print -r -u2 -- "__STDERR_INTACT__"
+  ' 2>&1 >/dev/null
+)"
+PROMPT_CHECK_STATUS=$?
+
+if (( PROMPT_CHECK_STATUS == 0 )) && [[ "$PROMPT_CHECK_OUT" == "__STDERR_INTACT__" ]]; then
+  printf 'ok    prompt async: VCS segment renders, no FD leaks, stderr intact\n'
+else
+  fail "prompt async: status=$PROMPT_CHECK_STATUS output=${PROMPT_CHECK_OUT:-<empty>}"
+fi
+
+##### 5. OPTIONAL OVERLAY CHECKS ##############################################
 #
 # When the work overlay branch ('google') is checked out, scripts/check-google.py
 # verifies that the 'main' base branch and core packages contain zero internal

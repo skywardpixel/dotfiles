@@ -141,7 +141,10 @@ typeset -g  PROMPT_VCS=''
 _pr_async_stop() {
   if [[ $_pr_fd != 0 ]]; then
     zle -F $_pr_fd 2>/dev/null
-    exec {_pr_fd}<&- 2>/dev/null
+    # Brace-wrap `exec`: a bare `exec` applies every redirection on the simple
+    # command permanently to the current shell, so `exec {fd}<&- 2>/dev/null`
+    # would permanently redirect interactive stderr (fd 2) to /dev/null.
+    { exec {_pr_fd}<&- } 2>/dev/null
     _pr_fd=0
   fi
   (( _pr_pid )) && { kill -TERM $_pr_pid 2>/dev/null; _pr_pid=0 }
@@ -164,9 +167,9 @@ _pr_async_start() {
 
 _pr_async_done() {
   local fd=$1 out=''
-  zle -F $fd
+  zle -F $fd 2>/dev/null
   IFS='' read -r -u $fd -d '' out
-  exec {fd}<&- 2>/dev/null
+  { exec {fd}<&- } 2>/dev/null
   _pr_fd=0 _pr_pid=0
 
   local serial=${out%%$'\n'*}
@@ -179,7 +182,7 @@ _pr_async_done() {
 
   [[ $segment == $PROMPT_VCS ]] && return 0
   PROMPT_VCS=$segment
-  zle reset-prompt
+  zle && zle reset-prompt
 }
 
 ##### HOOKS ####################################################################
