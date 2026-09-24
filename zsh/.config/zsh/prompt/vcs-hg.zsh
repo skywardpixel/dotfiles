@@ -49,9 +49,8 @@ _pr_vcs_hg_render() {
   _pr_add hg "${PROMPT_GLYPH[hg]} ${REPLY}"
 
   if (( $+functions[prompt_hg_extra] )); then
-    local saved=$REPLY; REPLY=''
+    REPLY=''
     prompt_hg_extra $root && [[ -n $REPLY ]] && _out+=" $REPLY"
-    REPLY=$saved
   fi
 
   [[ -n $dirty ]] && _pr_add dirty " ${PROMPT_GLYPH[dirty]}"

@@ -1,113 +1,137 @@
-.PHONY: help all core google restow unstow list dry-run status sync check \
-        deps deps-core deps-google deps-all update update-core update-google update-all
-
-# This Makefile is a thin alias layer over ./stow.py -- it deliberately holds no
-# package lists of its own. stow.py owns the package sets (core inline, work in
-# packages.google), the symlink/copy logic and the drift tracking, so adding or
-# removing a package is a one-line change there rather than an edit in two files
-# that can silently disagree.
+# Deploy dotfiles with GNU Stow.
 #
-# Anything expressible here is expressible directly:
-#   make core  ==  ./stow.py --core
-# Use ./stow.py when you need flags this layer does not surface (-f, -t, or a
-# specific package name).
+# Stow's own options live in .stowrc (--target=~ --no-folding), so running
+# plain `stow <pkg>` / `stow -D <pkg>` from this directory does exactly what
+# `make` does. This file only adds package sets, copy-mode files and helpers.
 
+CORE_PKGS := bin emacs eza ghostty git helix herdr nvim ssh tmux vim zsh
+
+# Filled in by the optional site overlay (google.mk, absent in a public checkout).
+GOOGLE_PKGS :=
+
+# Files deployed as regular copies instead of symlinks, as <package>/<path>.
+# For apps that rewrite their config with a temp file + rename(2), which
+# replaces a symlink with a regular file and silently orphans the repo copy.
+# Each must also be listed in its package's .stow-local-ignore so Stow skips it.
+COPY_FILES :=
+
+-include google.mk
+
+ALL_PKGS := $(CORE_PKGS) $(GOOGLE_PKGS)
 TARGET ?= $(HOME)
-STOW = ./stow.py -t $(TARGET)
+STOW := stow -t $(TARGET)
+
+.PHONY: help all core google restow unstow dry-run status sync check list list-core \
+        deps deps-core deps-google update update-core update-google
 
 help:
-	@echo "Modular Dotfiles"
+	@echo "Modular Dotfiles (GNU Stow; options in .stowrc)"
 	@echo ""
-	@echo "Usage:"
-ifneq ($(wildcard packages.google),)
-	@echo "  make core         - Stow core/universal packages"
-	@echo "  make google       - Stow work overlay packages (packages.google)"
-	@echo "  make all          - Stow all packages (core + work)"
-else
 	@echo "  make all          - Stow all packages"
+ifneq ($(GOOGLE_PKGS),)
+	@echo "  make core         - Stow core packages"
+	@echo "  make google       - Stow work overlay packages (google.mk)"
 endif
-	@echo "  make restow       - Restow all packages"
-	@echo "  make unstow       - Unstow all packages"
-	@echo "  make dry-run      - Simulate stowing without making changes"
-	@echo "  make list         - List available packages"
-	@echo ""
-	@echo "Drift (copy-mode files, see .stow-copy):"
-	@echo "  make status       - Report de-linked symlinks and diverged copies"
-	@echo "  make sync         - Pull app-written changes back into the repo"
-	@echo ""
-	@echo "Verification:"
+	@echo "  make restow       - Restow all packages (prune dead links, add new ones)"
+	@echo "  make unstow       - Remove all symlinks (copies are left in place)"
+	@echo "  make dry-run      - Show what 'make all' would do"
+	@echo "  make status       - Report de-linked files, conflicts and diverged copies"
+	@echo "  make sync         - Keep \$$HOME's versions (pull them into the repo; review with git diff)"
+	@echo "  make list         - List packages, one per line"
 	@echo "  make check        - Parse every zsh file and assert the shell starts clean"
 	@echo ""
-	@echo "Dependencies & Upgrades:"
-	@echo "  make deps         - Install dependencies for all packages"
-ifneq ($(wildcard packages.google),)
-	@echo "  make deps-core    - Install dependencies for core packages"
-	@echo "  make deps-google  - Install dependencies for work packages"
-endif
-	@echo "  make deps-<pkg>   - Install dependencies for a specific package (e.g. make deps-vim)"
-	@echo "  make update       - Update dependencies for all packages"
-ifneq ($(wildcard packages.google),)
-	@echo "  make update-core  - Update dependencies for core packages"
-endif
-	@echo "  make update-<pkg> - Update dependencies for a specific package (e.g. make update-tmux)"
+	@echo "  make deps / update          - Install / update external dependencies"
+	@echo "  make deps-<pkg> / update-<pkg>"
 	@echo ""
-	@echo "For flags this layer does not surface (-f, -t, or a subset of packages):"
-	@echo "  ./stow.py -h"
+	@echo "One-off, from this directory:  stow <pkg>   stow -D <pkg>   stow -R <pkg>"
 
-core:
-	$(STOW) --core
+# $(call copies,<packages>) -- the COPY_FILES belonging to those packages.
+copies = $(filter $(addsuffix /%,$(1)),$(COPY_FILES))
 
-google:
-	$(STOW) --google
+# $(call deploy,<stow flags>,<packages>) -- stow, then place copy-mode files.
+# A copy is written only when the target is missing; one that differs is
+# reported and left alone, since without history we cannot tell who is right.
+define deploy
+	$(STOW) $(1) $(2)
+	@for f in $(call copies,$(2)); do \
+	  dest="$(TARGET)/$${f#*/}"; \
+	  if [ ! -e "$$dest" ]; then \
+	    mkdir -p "$$(dirname "$$dest")" && cp "$$f" "$$dest" && echo "COPY: $$dest"; \
+	  elif ! cmp -s "$$f" "$$dest"; then \
+	    echo "CONFLICT (copy): $$dest differs from $$f"; \
+	    echo "  keep \$$HOME's: make sync    keep the repo's: rm $$dest && make"; \
+	  fi; \
+	done
+endef
 
 all:
-	$(STOW) --all
+	$(call deploy,,$(ALL_PKGS))
+
+core:
+	$(call deploy,,$(CORE_PKGS))
+
+google:
+	$(call deploy,,$(GOOGLE_PKGS))
 
 restow:
-	$(STOW) -R --all
+	$(call deploy,-R,$(ALL_PKGS))
 
 unstow:
-	$(STOW) -D --all
+	$(STOW) -D $(ALL_PKGS)
 
 dry-run:
-	$(STOW) -n --all
+	$(STOW) -n -v $(ALL_PKGS)
 
-# Report drift: symlinks an app has replaced with regular files, and copy-mode
-# files that have diverged. Exits non-zero if anything needs action.
+# A dry-run restow makes Stow report every conflict: files an app has
+# replaced with a regular file ("de-linked"), or foreign files in the way.
 status:
-	@$(STOW) -s --all
+	@rc=0; \
+	out=$$($(STOW) -n -R $(ALL_PKGS) 2>&1) || rc=1; \
+	printf '%s\n' "$$out" | grep -v '^WARNING: in simulation mode' || true; \
+	for f in $(call copies,$(ALL_PKGS)); do \
+	  dest="$(TARGET)/$${f#*/}"; \
+	  if [ ! -e "$$dest" ]; then echo "copy not deployed: $$dest"; rc=1; \
+	  elif ! cmp -s "$$f" "$$dest"; then echo "copy differs: diff $$dest $$f"; rc=1; fi; \
+	done; \
+	if [ $$rc = 0 ]; then echo "Clean."; fi; \
+	exit $$rc
 
-# Pull app-written changes to copy-mode files back into the repo.
+# Keep $HOME's versions: --adopt moves conflicting files into the repo and
+# links them; differing copies are copied back. Review with `git diff`.
 sync:
-	@$(STOW) --sync --all
+	$(STOW) --adopt $(ALL_PKGS)
+	@for f in $(call copies,$(ALL_PKGS)); do \
+	  dest="$(TARGET)/$${f#*/}"; \
+	  if [ -e "$$dest" ] && ! cmp -s "$$f" "$$dest"; then \
+	    cp "$$dest" "$$f" && echo "ADOPT (copy): $$dest -> $$f"; \
+	  fi; \
+	done
 
-# Parse every zsh file, then assert a real interactive startup exits 0 with
-# nothing on stderr. Exits non-zero if any check fails.
 check:
 	@./scripts/check-shell.sh
 
 list:
-	@./stow.py --list
+	@printf '%s\n' $(ALL_PKGS)
 
-deps: deps-all
-deps-all:
-	@./stow.py --deps-only --all
+list-core:
+	@printf '%s\n' $(CORE_PKGS)
+
+deps:
+	@for p in $(ALL_PKGS); do ./scripts/deps.sh $$p install || exit; done
 deps-core:
-	@./stow.py --deps-only --core
+	@for p in $(CORE_PKGS); do ./scripts/deps.sh $$p install || exit; done
 deps-google:
-	@./stow.py --deps-only --google
-
-update: update-all
-update-all:
-	@./stow.py --update-only --all
+	@for p in $(GOOGLE_PKGS); do ./scripts/deps.sh $$p install || exit; done
+update:
+	@for p in $(ALL_PKGS); do ./scripts/deps.sh $$p update || exit; done
 update-core:
-	@./stow.py --update-only --core
+	@for p in $(CORE_PKGS); do ./scripts/deps.sh $$p update || exit; done
 update-google:
-	@./stow.py --update-only --google
+	@for p in $(GOOGLE_PKGS); do ./scripts/deps.sh $$p update || exit; done
 
 # Single package, e.g. `make deps-vim` / `make update-tmux`. Explicit rules
-# above take precedence, so deps-core/-google/-all are unaffected.
+# above take precedence, so deps-core/-google are unaffected.
 deps-%:
-	@./stow.py --deps-only $*
+	@./scripts/deps.sh $* install
 update-%:
-	@./stow.py --update-only $*
+	@./scripts/deps.sh $* update

@@ -50,9 +50,8 @@ _pr_vcs_jj_render() {
   _pr_add jj "$body"
 
   if (( $+functions[prompt_jj_extra] )); then
-    local saved=$REPLY; REPLY=''
+    REPLY=''
     prompt_jj_extra $root && [[ -n $REPLY ]] && _out+=" $REPLY"
-    REPLY=$saved
   fi
 
   [[ -n $conflict  ]] && _pr_add conflict " ${PROMPT_GLYPH[conflict]}"

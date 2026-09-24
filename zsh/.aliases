@@ -5,7 +5,7 @@
 alias cp='cp -iv'
 alias mv='mv -iv'
 alias mkdir='mkdir -pv'
-alias path='echo -e ${PATH//:/\\n}'
+alias path='print -l $path'
 alias du='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
 alias ls='eza' # ls
 alias ll='eza -lbF --git' # list, size, type, git

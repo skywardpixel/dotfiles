@@ -20,28 +20,30 @@ A clean, modular cross-platform dotfiles configuration managed with [GNU Stow](h
 - **`zsh/`**: Zsh environment (`.zshrc`, `.zshenv`, `.zprofile`, `.aliases`, `.env`, a framework-free async prompt in `.config/zsh/prompt.zsh`, `zsh-abbr`, symlink-aware function autoloading).
 
 > [!NOTE]
-> The package sets live in one place each: core packages inline in `stow.py`, and optional site-overlay packages in `packages.google` (absent in a public checkout, so `--all`, `--core`, and `--google` all resolve cleanly without maintaining separate copies of `stow.py` or `Makefile`).
+> The package sets live in one place each: core packages in the `Makefile`, and optional site-overlay packages in `google.mk` (absent in a public checkout, so `make all` simply stows the core set).
 
 ---
 
 ## 🚀 Quick Start
 
 ### 1. Prerequisites
-Ensure `stow` and `git` are installed (though `./stow.py` also includes a built-in native fallback when the `stow` binary is absent):
+Install `stow` and `git`:
 - **Arch / Omarchy**: `sudo pacman -S stow`
 - **Debian / Ubuntu**: `sudo apt install stow`
 - **macOS**: `brew install stow`
 
 ### 2. Usage
 
-You can use either the `Makefile` or `./stow.py`.
+Stow's options live in `.stowrc` (`--target=~ --no-folding`: one symlink per file, never a symlinked directory), so from the checkout plain `stow` works for one-off operations. The `Makefile` adds package sets, copy-mode files and helpers on top.
 
-`./stow.py` is the single implementation; the `Makefile` is a thin alias layer over it holding **no package lists of its own** (`make core` is `./stow.py --core`). Use `make` for the common workflows, and `./stow.py` directly when you need flags `make` does not surface (`-f`, `-t`, or a specific list of packages).
-
-#### Using `Makefile`:
 ```bash
 # Stow all available packages
 make all
+
+# One-off, from the checkout
+stow nvim zsh        # stow specific packages
+stow -D tmux         # unstow one
+stow -n -v zsh       # dry-run
 
 # Install external dependencies (Vim-Plug, TPM, Ghostty shaders, Antidote)
 make deps
@@ -56,42 +58,20 @@ make update
 # Simulate stowing without making changes
 make dry-run
 
-# Restow / prune dead links
+# Restow: prune dead links and pick up new files
 make restow
 
 # Unstow / remove symlinks
 make unstow
 
-# Report de-linked symlinks and diverged copy-mode files
+# Report de-linked symlinks, conflicts and diverged copy-mode files
 make status
 
-# Pull app-written changes to copy-mode files back into the repo
+# Keep $HOME's versions: stow --adopt moves them into the repo (review with git diff)
 make sync
 
 # Verify every zsh file parses and interactive shell startup exits 0 with clean stderr
 make check
-```
-
-#### Using `./stow.py`:
-```bash
-# Stow core packages
-./stow.py --core
-
-# Stow and install dependencies together
-./stow.py --all --deps
-
-# Install or update dependencies only
-./stow.py --deps-only vim tmux
-./stow.py --update-only
-
-# Stow specific packages
-./stow.py nvim zsh tmux
-
-# Force adopt existing regular files (with automatic backup)
-./stow.py -f --all
-
-# Dry-run
-./stow.py -n --core
 ```
 
 ---
@@ -182,7 +162,7 @@ Three strategies, best first:
 | # | Strategy | Drift | Ongoing cost |
 | :-- | :--- | :--- | :--- |
 | 1 | **Relocate** the app's config into the checkout | structurally impossible | none |
-| 2 | **Copy mode** (`.stow-copy`) + `make status` / `make sync` | detected | must sync after the app writes |
+| 2 | **Copy mode** (`COPY_FILES`) + `make status` / `make sync` | detected | must sync after the app writes |
 | 3 | Plain symlink | **silent loss** | none — until it breaks |
 
 > [!IMPORTANT]
@@ -201,25 +181,19 @@ Three strategies, best first:
 
 `%x` is the file currently being sourced and `:A` resolves it through the Stow symlink, pointing straight into the checkout regardless of where the repo was cloned. `abbr add` then edits the tracked file in place and shows up in `git status`. For session-only abbreviations that should *not* be persisted to the shared file, use `abbr -S`.
 
-#### 2. Copy mode (`.stow-copy`)
+#### 2. Copy mode (`COPY_FILES`)
 
-When an application offers no env var, flag, `XDG_CONFIG_HOME` support, or `include` directive, a package can declare a `.stow-copy` manifest of package-relative globs to deploy as regular file copies instead of symlinks. Everything else in the package is still symlinked, and `stow.py` records the deployed file's hash under `.stow-state/` (gitignored, machine-local).
+When an application offers no env var, flag, `XDG_CONFIG_HOME` support, or `include` directive, add the file to `COPY_FILES` in the `Makefile` (as `<package>/<path>`) and to that package's `.stow-local-ignore`. Stow then skips it, and `make` deploys it as a regular copy instead. Everything else in the package is still symlinked.
 
-**Why the recorded hash matters.** A two-way repo↔target diff cannot distinguish a repo edit from an app write, so it cannot know which direction to sync. The recorded hash is the referee:
-
-| repo == recorded | target == recorded | Meaning | Action |
-| :--- | :--- | :--- | :--- |
-| ✅ | ✅ | clean | — |
-| ❌ | ✅ | you edited the repo | `./stow.py` applies it |
-| ✅ | ❌ | the app wrote the target | `make sync` pulls it back |
-| ❌ | ❌ | **both changed** | **refused** — diff and resolve by hand |
+There is no drift database. A copy is written when the target is missing, left alone when identical, and otherwise reported as a conflict, leaving you to pick a side:
 
 ```bash
-make status   # report drift; exits non-zero if anything needs action
-make sync     # pull app-written changes back into the repo
+make status              # report drift; exits non-zero if anything needs action
+make sync                # keep $HOME's version (pulled into the repo; review with git diff)
+rm <target> && make all  # keep the repo's version
 ```
 
-`stow.py` refuses to overwrite an unsynced app write (`-f` overrides, backing the target up first), and `-D` refuses to delete one. `make status` also detects the original failure mode across *all* packages: any symlink an app has replaced with a regular file is reported as `DE-LINKED`.
+`make unstow` leaves copies in place. `make status` also detects the original failure mode across *all* packages: Stow reports any symlink an app has replaced with a regular file as a conflict.
 
 ### Neovim Modularization
 Neovim's `lua/config/lazy.lua` dynamically checks whether an optional overlay directory (`lua/google-plugins`) exists before importing it:

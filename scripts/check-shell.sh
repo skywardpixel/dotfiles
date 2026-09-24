@@ -77,7 +77,7 @@ fi
 if [[ -L "$HOME/.zshrc" && "$(readlink -f "$HOME/.zshrc")" == "$DOTFILES_DIR"/* ]]; then
   DEPLOYED="this checkout"
 else
-  DEPLOYED="NOT this checkout -- run ./stow.py zsh"
+  DEPLOYED="NOT this checkout -- run: stow zsh"
 fi
 
 # Capture startup $? first, then emit a canary token on fd 2. This catches both
@@ -110,7 +110,7 @@ fi
 # without any google-* overlay files, so a passing $HOME check on a work machine
 # (where ~/.aliases.google is stowed) cannot mask a failure in the public config.
 SANDBOX_HOME="$(mktemp -d)"
-./stow.py --core -t "$SANDBOX_HOME" >/dev/null 2>&1
+make -s core TARGET="$SANDBOX_HOME" >/dev/null 2>&1
 if [[ -d "$HOME/.antidote" ]]; then
   ln -s "$HOME/.antidote" "$SANDBOX_HOME/.antidote"
 fi
