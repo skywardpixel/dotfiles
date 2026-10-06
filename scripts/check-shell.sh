@@ -118,7 +118,10 @@ if [[ -d "${XDG_CACHE_HOME:-$HOME/.cache}/antidote" ]]; then
   mkdir -p "$SANDBOX_HOME/.cache"
   ln -s "${XDG_CACHE_HOME:-$HOME/.cache}/antidote" "$SANDBOX_HOME/.cache/antidote"
 fi
-CORE_STDERR="$(HOME="$SANDBOX_HOME" ZDOTDIR="$SANDBOX_HOME" zsh -d -i -c "$STARTUP_Probe" 2>&1 >/dev/null)"
+# Run from inside the sandbox: tools like mise walk up from $PWD looking for
+# config, and the checkout lives under the real $HOME, so they would otherwise
+# pick up (untrusted, from the sandbox's view) real-home config files.
+CORE_STDERR="$(cd "$SANDBOX_HOME" && HOME="$SANDBOX_HOME" ZDOTDIR="$SANDBOX_HOME" zsh -d -i -c "$STARTUP_Probe" 2>&1 >/dev/null)"
 CORE_STATUS=$?
 rm -rf "$SANDBOX_HOME"
 
