@@ -44,13 +44,12 @@ fi
 #
 # Discovered, not listed, so a new prompt module or function is covered the
 # moment it is added. .zsh_plugins.txt is an antidote manifest rather than
-# shell code, and zsh-abbr's store is generated data.
+# shell code.
 
 mapfile -t ZSH_FILES < <(
   find . -type f \
-    \( -name '.zsh*' -o -name '.aliases*' -o -name '*.zsh' -o -path '*/zsh/functions/*' \) \
+    \( -name '.zsh*' -o -name '.aliases*' -o -name '*.zsh' \) \
     -not -name '.zsh_plugins.txt' \
-    -not -path '*/zsh-abbr/*' \
     -not -path './.git/*' \
     | sort
 )

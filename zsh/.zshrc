@@ -31,15 +31,6 @@ setopt hist_expire_dups_first
 
 ##### COMPLETION ###############################################################
 
-# (N-.) follows symlinks, since Stow installs these as symlinks.
-() {
-  local fndir=${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions
-  if [[ -d $fndir ]]; then
-    fpath=($fndir $fpath)
-    autoload -Uz $fndir/*(N-.:t)
-  fi
-}
-
 autoload -Uz compinit
 () {
   local dump=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump
@@ -83,15 +74,6 @@ if [[ ! -d ~/.antidote ]]; then
 fi
 
 ABBR_SET_EXPANSION_CURSOR=1
-
-# zsh-abbr saves via rename(2), which would replace a Stow symlink. Point it at
-# the real file in the dotfiles checkout instead.
-() {
-  local abbr_file=${${(%):-%x}:A:h}/.config/zsh-abbr/user-abbreviations
-  if [[ -f $abbr_file ]]; then
-    export ABBR_USER_ABBREVIATIONS_FILE=$abbr_file
-  fi
-}
 
 source ~/.antidote/antidote.zsh
 antidote load

@@ -17,7 +17,7 @@ A clean, modular cross-platform dotfiles configuration managed with [GNU Stow](h
 - **`ssh/`**: SSH base config with `Include ~/.ssh/conf.d/*`.
 - **`tmux/`**: Tmux configuration with TokyoNight styling and sensible defaults.
 - **`vim/`**: Minimal Vim configuration with vim-plug support.
-- **`zsh/`**: Zsh environment (`.zshrc`, `.zshenv`, `.zprofile`, `.aliases`, `.env`, a framework-free async prompt in `.config/zsh/prompt.zsh`, `zsh-abbr`, symlink-aware function autoloading).
+- **`zsh/`**: Zsh environment (`.zshrc`, `.zshenv`, `.zprofile`, `.aliases`, `.env`, a framework-free async prompt in `.config/zsh/prompt.zsh`; functions and `zsh-abbr` abbreviations live in `.aliases`).
 
 > [!NOTE]
 > The package sets live in one place each: core packages in the `Makefile`, and optional site-overlay packages in `google.mk` (absent in a public checkout, so `make all` simply stows the core set).
@@ -135,21 +135,6 @@ prompt_jj_extra R            # extra jj text
 
 Two seams avoid duplicating VCS queries in an overlay: `PROMPT_HG_EXTRA_TEMPLATE` appends template keywords to the core's existing `hg log` call (so extra metadata costs no second invocation), and `prompt_vcs_watch_extra` contributes additional cache-invalidation files.
 
-### Symlink-Aware Shell Functions (`zfuncs`)
-Standard Zsh function-autoload snippets scan using the `(N.:t)` glob qualifier. Because `.` matches only regular plain files, symlinked function files created by Stow are silently ignored.
-
-`zsh/.zshrc` uses the symlink-following qualifier `(N-.:t)`:
-```zsh
-() {
-  local fndir=${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions
-  if [[ -d $fndir ]]; then
-    fpath=($fndir $fpath)
-    autoload -Uz $fndir/*(N-.:t)
-  fi
-}
-```
-The `-` modifier makes `.` apply after symlink resolution, so custom functions from `zsh` and any overlay package autoload seamlessly.
-
 ### Write-Back Config Files
 
 Some applications *rewrite* their own config by writing a temporary file and `rename(2)`-ing it over the target. Because `rename(2)` replaces the **path**, a Stow symlink at that path is destroyed and silently replaced by a regular file — after which the repo stops receiving updates and `git status` stays clean, because the broken link lives in `$HOME`, outside the work tree.
@@ -168,18 +153,12 @@ Three strategies, best first:
 > [!IMPORTANT]
 > Copy mode does **not** capture the app's write automatically; it makes the divergence *detectable* and one command to sync. Prefer strategy 1 whenever the app offers a way to relocate its config path.
 
-#### 1. Relocation — `zsh-abbr`
+#### 1. Relocation
 
-`zsh-abbr` lets you choose its storage file via `ABBR_USER_ABBREVIATIONS_FILE`, so the symlink can be removed from the write path (`zsh/.zshrc`):
+Point the app at a file inside the checkout via its env var, flag, or `XDG_CONFIG_HOME` support, so no symlink sits in the write path.
 
-```zsh
-() {
-  local abbr_file=${${(%):-%x}:A:h}/.config/zsh-abbr/user-abbreviations
-  [[ -f $abbr_file ]] && export ABBR_USER_ABBREVIATIONS_FILE=$abbr_file
-}
-```
-
-`%x` is the file currently being sourced and `:A` resolves it through the Stow symlink, pointing straight into the checkout regardless of where the repo was cloned. `abbr add` then edits the tracked file in place and shows up in `git status`. For session-only abbreviations that should *not* be persisted to the shared file, use `abbr -S`.
+> [!NOTE]
+> `zsh-abbr` sidesteps the problem entirely: abbreviations are declared in `zsh/.aliases` with `abbr -S` (session-only), so it never writes a tracked file. `abbr add` still works for ad-hoc abbreviations, which land in the untracked `~/.config/zsh-abbr/user-abbreviations`.
 
 #### 2. Copy mode (`COPY_FILES`)
 
