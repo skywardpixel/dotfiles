@@ -61,6 +61,7 @@ typeset -gA PROMPT_COLOR=(
   error     203    # non-zero exit status
   duration  101
   meta      244    # de-emphasised (descriptions, counts)
+  os        250    # host OS icon
 )
 
 typeset -gA PROMPT_GLYPH=(
@@ -75,6 +76,10 @@ typeset -g PROMPT_DESC_WIDTH=40
 # Show only the prompt character once a command has been accepted.
 typeset -g PROMPT_TRANSIENT=1
 
+# Lead the first line with a host OS icon (p10k's os_icon). Needs a Nerd Font.
+# Set to 0 to drop it, or preset PROMPT_GLYPH[os] to force a specific glyph.
+typeset -g PROMPT_OS_ICON=${PROMPT_OS_ICON:-1}
+
 ##### SMALL HELPERS ############################################################
 
 # Escape '%' so repo/directory names can never be read as prompt escapes.
@@ -85,6 +90,58 @@ _pr_trim() { if (( $#1 > $2 )); then REPLY="${1[1,$2]}…"; else REPLY=$1; fi }
 # Append coloured text to the caller's $_out. A function call rather than a
 # command substitution, so rendering a segment costs zero forks.
 _pr_add() { _out+="%F{${PROMPT_COLOR[$1]}}${2}%f" }
+
+##### HOST OS ##################################################################
+#
+# Resolved once at load time: the OS cannot change under a running shell, so
+# there is no reason to pay for it per prompt. `$(<file)` is a builtin read in
+# zsh, so this costs no forks either. Glyphs are the Nerd Font codepoints p10k
+# uses for its os_icon segment.
+
+_pr_os_icon() {
+  REPLY=''
+  case $OSTYPE in
+    darwin*)        REPLY=$'\uf179'; return ;;   #  apple
+    linux-android*) REPLY=$'\uf17b'; return ;;   #  android
+    freebsd*)       REPLY=$'\uf30c'; return ;;   #  freebsd
+    cygwin*|msys*)  REPLY=$'\uf17a'; return ;;   #  windows
+    linux*)         ;;
+    *)              return 1 ;;
+  esac
+
+  local id='' line
+  if [[ -r /etc/os-release ]]; then
+    for line in ${(f)"$(</etc/os-release)"}; do
+      [[ $line == ID=* ]] || continue
+      id=${${line#ID=}//[\"\']/}
+      break
+    done
+  fi
+
+  case $id in
+    arch)                REPLY=$'\uf303' ;;   #  arch
+    debian)              REPLY=$'\uf306' ;;   #  debian (incl. gLinux)
+    ubuntu)              REPLY=$'\uf31b' ;;   #  ubuntu
+    fedora)              REPLY=$'\uf30a' ;;   #  fedora
+    gentoo)              REPLY=$'\uf30d' ;;   #  gentoo
+    nixos)               REPLY=$'\uf313' ;;   #  nixos
+    alpine)              REPLY=$'\uf300' ;;   #  alpine
+    centos)              REPLY=$'\uf304' ;;   #  centos
+    raspbian)            REPLY=$'\uf315' ;;   #  raspbian
+    manjaro)             REPLY=$'\uf312' ;;   #  manjaro
+    opensuse*|sles)      REPLY=$'\uf314' ;;   #  opensuse
+    rhel)                REPLY=$'\uf316' ;;   #  rhel
+    linuxmint)           REPLY=$'\uf30e' ;;   #  mint
+    elementary)          REPLY=$'\uf309' ;;   #  elementary
+    void)                REPLY=$'\uf32e' ;;   #  void
+    kali)                REPLY=$'\uf327' ;;   #  kali
+    *)                   REPLY=$'\uf17c' ;;   #  generic tux
+  esac
+}
+
+if (( PROMPT_OS_ICON )) && [[ -z ${PROMPT_GLYPH[os]-} ]]; then
+  _pr_os_icon && PROMPT_GLYPH[os]=$REPLY
+fi
 
 ##### MODULES ##################################################################
 #
@@ -241,7 +298,11 @@ _pr_precmd() {
 _pr_build() {
   local -i last_status=$1
 
-  PROMPT='${_pr_dirseg}${PROMPT_VCS:+ ${PROMPT_VCS}}'$'\n'
+  PROMPT=''
+  if (( PROMPT_OS_ICON )) && [[ -n ${PROMPT_GLYPH[os]-} ]]; then
+    PROMPT+="%F{${PROMPT_COLOR[os]}}${PROMPT_GLYPH[os]}%f "
+  fi
+  PROMPT+='${_pr_dirseg}${PROMPT_VCS:+ ${PROMPT_VCS}}'$'\n'
   if (( last_status )); then
     PROMPT+="%F{${PROMPT_COLOR[error]}}${PROMPT_GLYPH[char]}%f "
   else
