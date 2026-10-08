@@ -177,9 +177,7 @@ rm <target> && make all  # keep the repo's version
 Neovim's `lua/config/lazy.lua` dynamically checks whether an optional overlay directory (`lua/google-plugins`) exists before importing it:
 ```lua
 local google_plugins_dir = vim.fn.stdpath("config") .. "/lua/google-plugins"
-if vim.uv.fs_stat(google_plugins_dir) then
-  table.insert(plugins_spec, { import = "google-plugins" })
-end
+if vim.uv.fs_stat(google_plugins_dir) then table.insert(plugins_spec, { import = "google-plugins" }) end
 ```
 When only the core `nvim` package is stowed, the overlay directory is absent and omitted without any manual configuration changes.
 

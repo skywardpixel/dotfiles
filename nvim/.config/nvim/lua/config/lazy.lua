@@ -22,9 +22,7 @@ local plugins_spec = {
 
 -- Only import google-plugins if the directory exists (stowed via google-nvim)
 local google_plugins_dir = vim.fn.stdpath("config") .. "/lua/google-plugins"
-if vim.uv.fs_stat(google_plugins_dir) then
-  table.insert(plugins_spec, { import = "google-plugins" })
-end
+if vim.uv.fs_stat(google_plugins_dir) then table.insert(plugins_spec, { import = "google-plugins" }) end
 
 require("lazy").setup({
   spec = plugins_spec,
