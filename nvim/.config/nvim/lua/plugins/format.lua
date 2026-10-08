@@ -26,11 +26,6 @@ return {
       default_format_opts = {
         lsp_format = "fallback",
       },
-      formatters = {
-        shfmt = {
-          append_args = { "-i", "2" },
-        },
-      },
     },
   },
 }

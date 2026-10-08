@@ -122,9 +122,8 @@ _pr_signature() {
 
 ##### BACKEND SUPPORT ##########################################################
 
-# Run a VCS command with a hard deadline. jj's first command of the day can
-# block for tens of seconds (daemon start + re-auth) and jj outages can hang it
-# for minutes; we would rather show a stale segment than leak a stuck job.
+# Run a VCS command with a hard deadline of PROMPT_VCS_TIMEOUT. jj outages can
+# hang it for minutes; we would rather show a stale segment than leak a stuck job.
 _pr_run() {
   if (( $+commands[timeout] )); then
     command timeout --signal=TERM $PROMPT_VCS_TIMEOUT "$@" 2>/dev/null

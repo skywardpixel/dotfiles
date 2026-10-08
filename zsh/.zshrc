@@ -8,8 +8,6 @@ setopt extended_glob glob_dots numeric_glob_sort no_nomatch
 setopt interactive_comments
 setopt no_beep
 setopt no_flow_control
-setopt multios
-unsetopt correct correct_all
 
 bindkey -e
 
@@ -58,13 +56,8 @@ zstyle ':completion:*' cache-path ${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompcache
 ##### PROMPT ###################################################################
 # Must load before plugins so they wrap the transient-prompt accept-line widget.
 
-source ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.zsh
-if [[ -f ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.google.zsh ]]; then
-  source ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.google.zsh
-fi
-if [[ -f ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.local.zsh ]]; then
-  source ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt.local.zsh
-fi
+for _f in ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/prompt{,.google,.local}.zsh(N); do source $_f; done
+unset _f
 prompt_enable_transient
 
 ##### PLUGINS ##################################################################

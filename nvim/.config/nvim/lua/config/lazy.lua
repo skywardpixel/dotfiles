@@ -1,6 +1,6 @@
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
   local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
   if vim.v.shell_error ~= 0 then
@@ -22,17 +22,12 @@ local plugins_spec = {
 
 -- Only import google-plugins if the directory exists (stowed via google-nvim)
 local google_plugins_dir = vim.fn.stdpath("config") .. "/lua/google-plugins"
-if (vim.uv or vim.loop).fs_stat(google_plugins_dir) then
+if vim.uv.fs_stat(google_plugins_dir) then
   table.insert(plugins_spec, { import = "google-plugins" })
 end
 
 require("lazy").setup({
   spec = plugins_spec,
-  -- Configure any other settings here. See the documentation for more details.
-  -- colorscheme that will be used when installing plugins.
+  -- Colorscheme used while installing plugins.
   install = { colorscheme = { "tokyonight" } },
-  checker = {
-    enabled = false, -- check for plugin updates periodically
-    notify = true, -- notify on update
-  }, -- automatically check for plugin updates
 })

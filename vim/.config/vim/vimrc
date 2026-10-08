@@ -2,12 +2,8 @@
 " A (not so) minimal vimrc.
 "
 
-" You want Vim, not vi. When Vim finds a vimrc, 'nocompatible' is set anyway.
-" We set it explicitly to make our position clear!
-set nocompatible
-
-filetype plugin indent on  " Load plugins according to detected filetype.
-syntax on                  " Enable syntax highlighting.
+" vim-sensible covers backspace, laststatus, incsearch and display, and
+" plug#end() turns on filetype detection and syntax highlighting.
 
 set number
 augroup numbertoggle
@@ -24,18 +20,13 @@ set softtabstop =4         " Tab key indents by 4 spaces.
 set shiftwidth  =4         " >> indents by 4 spaces.
 set shiftround             " >> indents to next multiple of 'shiftwidth'.
 
-set backspace   =indent,eol,start  " Make backspace work as you would expect.
 set hidden                 " Switch between buffers without having to save first.
-set laststatus  =2         " Always show statusline.
-set display     =lastline  " Show as much as possible of the last line.
 
 set noshowmode             " Hide current mode in command-line.
 set showcmd                " Show already typed keys when more are expected.
 
-set incsearch              " Highlight while searching with / or ?.
 set hlsearch               " Keep matches highlighted.
 
-set ttyfast                " Faster redrawing.
 set lazyredraw             " Only redraw when necessary.
 
 set splitbelow             " Open new windows below the current window.
@@ -53,8 +44,8 @@ else
   let &listchars = 'tab:> ,extends:>,precedes:<,nbsp:.'
 endif
 
-filetype off
-if filereadable("~/.config/vim/glug-plugins.vim")
+if filereadable(expand("~/.config/vim/glug-plugins.vim"))
+  filetype off
   source ~/.config/vim/glug-plugins.vim
 endif
 
@@ -82,8 +73,6 @@ let g:tokyonight_style = 'night' " available: night, storm
 let g:tokyonight_enable_italic = 1
 colorscheme tokyonight
 let g:lightline = {'colorscheme': 'tokyonight'}
-
-filetype plugin indent on
 
 " Use C-J/K/L/H to move between splits
 nnoremap <C-J> <C-W><C-J>

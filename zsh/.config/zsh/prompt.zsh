@@ -38,8 +38,8 @@
 #
 # The last two run inside the background job, so they may call commands.
 #
-# Everything here is plain zsh. To change how it looks, edit the two arrays
-# below; there is no configuration wizard and no generated file.
+# Everything here is plain zsh. To change how it looks, edit the settings
+# under APPEARANCE; there is no configuration wizard and no generated file.
 
 setopt prompt_subst
 autoload -Uz add-zsh-hook

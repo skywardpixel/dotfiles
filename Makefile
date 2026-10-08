@@ -4,7 +4,7 @@
 # plain `stow <pkg>` / `stow -D <pkg>` from this directory does exactly what
 # `make` does. This file only adds package sets, copy-mode files and helpers.
 
-CORE_PKGS := bin emacs eza ghostty git helix herdr nvim ssh tmux vim zsh
+CORE_PKGS := bin eza ghostty git helix nvim ssh tmux vim zsh
 
 # Filled in by the optional site overlay (google.mk, absent in a public checkout).
 GOOGLE_PKGS :=
@@ -116,18 +116,15 @@ list:
 list-core:
 	@printf '%s\n' $(CORE_PKGS)
 
-deps:
-	@for p in $(ALL_PKGS); do ./scripts/deps.sh $$p install || exit; done
-deps-core:
-	@for p in $(CORE_PKGS); do ./scripts/deps.sh $$p install || exit; done
-deps-google:
-	@for p in $(GOOGLE_PKGS); do ./scripts/deps.sh $$p install || exit; done
-update:
-	@for p in $(ALL_PKGS); do ./scripts/deps.sh $$p update || exit; done
-update-core:
-	@for p in $(CORE_PKGS); do ./scripts/deps.sh $$p update || exit; done
-update-google:
-	@for p in $(GOOGLE_PKGS); do ./scripts/deps.sh $$p update || exit; done
+# $(call deps,<packages>,install|update)
+deps = @for p in $(1); do ./scripts/deps.sh $$p $(2) || exit; done
+
+deps:          ; $(call deps,$(ALL_PKGS),install)
+deps-core:     ; $(call deps,$(CORE_PKGS),install)
+deps-google:   ; $(call deps,$(GOOGLE_PKGS),install)
+update:        ; $(call deps,$(ALL_PKGS),update)
+update-core:   ; $(call deps,$(CORE_PKGS),update)
+update-google: ; $(call deps,$(GOOGLE_PKGS),update)
 
 # Single package, e.g. `make deps-vim` / `make update-tmux`. Explicit rules
 # above take precedence, so deps-core/-google are unaffected.

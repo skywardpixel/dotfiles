@@ -29,7 +29,7 @@
 	rs = restore
 	rss = restore --staged
 	rsw = restore --staged --worktree
-	unstage = restore --staged --worktree
+	unstage = restore --staged
 	wipe = restore --staged --worktree .
 	undo = reset --soft HEAD~1
 	wt = worktree

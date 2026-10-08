@@ -239,11 +239,6 @@ return {
         desc = "Autocmds",
       },
       {
-        "<leader>sb",
-        function() Snacks.picker.lines() end,
-        desc = "Buffer Lines",
-      },
-      {
         "<leader>sc",
         function() Snacks.picker.command_history() end,
         desc = "Command History",
@@ -458,12 +453,8 @@ return {
           _G.bt = function() Snacks.debug.backtrace() end
 
           -- Override print to use snacks for `:=` command
-          if vim.fn.has("nvim-0.11") == 1 then
-            ---@diagnostic disable-next-line: duplicate-set-field
-            vim._print = function(_, ...) dd(...) end
-          else
-            vim.print = _G.dd
-          end
+          ---@diagnostic disable-next-line: duplicate-set-field
+          vim._print = function(_, ...) dd(...) end
 
           -- Create some toggle mappings
           Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>us")
@@ -504,7 +495,6 @@ return {
     },
     dependencies = {
       "MunifTanjim/nui.nvim",
-      "rcarriga/nvim-notify",
     },
   },
 }

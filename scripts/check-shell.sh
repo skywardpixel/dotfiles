@@ -1,24 +1,16 @@
 #!/usr/bin/env bash
 # Verify the shell configuration parses and starts cleanly.
 #
-# Three checks, in increasing order of what they can catch:
+#   1. zsh -n on every zsh file (parse only; works in an unstowed checkout).
+#   2. Exit status of a real interactive startup: catches a trailing
+#      `cond && cmd` whose test is false, which fails while printing nothing.
+#   3. stderr of that startup must be empty, and fd 2 must survive it.
+#      Also run against a sandbox $HOME with only the core packages stowed.
+#   4. The prompt's async worker renders, leaks no fd and keeps stderr intact.
+#   5. Overlay checks (scripts/check-google.py), when present.
 #
-#   1. zsh -n on every zsh file in the repo. Parse only, nothing executed, so
-#      it works in a checkout that has never been stowed.
-#   2. The exit status of a real interactive startup. This is the one that
-#      catches a trailing `[[ -f optional-file ]] && source optional-file`
-#      whose test is false: zsh hands the status of the last command run
-#      during startup to the first prompt, so the shell reports failure while
-#      printing nothing at all.
-#   3. stderr from that same startup must be empty. Most genuine breakage
-#      (missing command, plugin blowing up) prints but does not set a status,
-#      so this catches the complement of check 2.
-#
-# Deliberately NOT a ZERR trap over the whole of startup. zsh disables the
-# trap "while running initialization scripts" anyway, and sourcing the rc
-# chain by hand to dodge that reports ~225 failing commands in a healthy
-# shell -- every one of them a plugin using non-zero as ordinary control
-# flow. There is no signal in it to gate on.
+# Why not a ZERR trap over all of startup: see "Shell Startup Checks" in
+# README.md.
 #
 # Usage: ./scripts/check-shell.sh     (or: make check)
 
@@ -84,8 +76,8 @@ fi
 #   - Extra text before the canary => startup printed an error/warning.
 #   - Missing canary               => startup closed or redirected fd 2.
 STDERR_CANARY="__STDERR_INTACT__"
-STARTUP_Probe='s=$?; print -r -u2 -- '"'$STDERR_CANARY'"'; exit $s'
-STARTUP_STDERR="$(zsh -i -c "$STARTUP_Probe" 2>&1 >/dev/null)"
+STARTUP_PROBE='s=$?; print -r -u2 -- '"'$STDERR_CANARY'"'; exit $s'
+STARTUP_STDERR="$(zsh -i -c "$STARTUP_PROBE" 2>&1 >/dev/null)"
 STARTUP_STATUS=$?
 
 if (( STARTUP_STATUS == 0 )); then
@@ -120,7 +112,7 @@ fi
 # Run from inside the sandbox: tools like mise walk up from $PWD looking for
 # config, and the checkout lives under the real $HOME, so they would otherwise
 # pick up (untrusted, from the sandbox's view) real-home config files.
-CORE_STDERR="$(cd "$SANDBOX_HOME" && HOME="$SANDBOX_HOME" ZDOTDIR="$SANDBOX_HOME" zsh -d -i -c "$STARTUP_Probe" 2>&1 >/dev/null)"
+CORE_STDERR="$(cd "$SANDBOX_HOME" && HOME="$SANDBOX_HOME" ZDOTDIR="$SANDBOX_HOME" zsh -d -i -c "$STARTUP_PROBE" 2>&1 >/dev/null)"
 CORE_STATUS=$?
 rm -rf "$SANDBOX_HOME"
 

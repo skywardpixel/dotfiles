@@ -7,13 +7,11 @@ A clean, modular cross-platform dotfiles configuration managed with [GNU Stow](h
 ## 📦 Included Packages
 
 - **`bin/`**: Universal scripts (`clip`, `osc52.sh`).
-- **`emacs/`**: Emacs configuration (`init.el`, `early-init.el`, `lisp/`).
 - **`eza/`**: Theme for `eza`.
 - **`ghostty/`**: Terminal configuration with TokyoNight styling.
 - **`git/`**: Git config with sensible aliases and global ignore.
 - **`helix/`**: Modal editor settings.
-- **`herdr/`**: Herdr terminal workspace manager configuration (`tokyo-night` theme and workspace keybindings).
-- **`nvim/`**: Neovim configuration (Lazy.nvim, plugins, options, keymaps, ftplugins).
+- **`nvim/`**: Neovim configuration (Lazy.nvim, plugins, options, keymaps).
 - **`ssh/`**: SSH base config with `Include ~/.ssh/conf.d/*`.
 - **`tmux/`**: Tmux configuration with TokyoNight styling and sensible defaults.
 - **`vim/`**: Minimal Vim configuration with vim-plug support.
@@ -45,7 +43,8 @@ stow nvim zsh        # stow specific packages
 stow -D tmux         # unstow one
 stow -n -v zsh       # dry-run
 
-# Install external dependencies (Vim-Plug, TPM, Ghostty shaders, Antidote)
+# Install external dependencies (Vim-Plug, TPM, Ghostty shaders, Antidote).
+# zsh, tmux and vim also fetch their own on first start; this does it ahead of time.
 make deps
 
 # Install or update external dependencies for a single package
@@ -85,7 +84,7 @@ git pull
 make restow     # pick up any files that were added, moved, or removed
 ```
 
-`make restow` matters: `git pull` updates the repository, but symlinks for newly added files are only created when you restow. Keep machine-specific tweaks in untracked `*.local` files (`.zshrc`, `.zshenv`, `.aliases`, and `prompt.zsh` all source their `.local` counterparts if present).
+`make restow` matters: `git pull` updates the repository, but symlinks for newly added files are only created when you restow. Stow does not prune links inside a directory the package no longer has; after such a removal, delete the dangling links by hand (`find ~/.config -xtype l`). Keep machine-specific tweaks in untracked `*.local` files (`.zshrc`, `.zshenv`, `.aliases`, and `prompt.zsh` all source their `.local` counterparts if present).
 
 ---
 
@@ -178,7 +177,7 @@ rm <target> && make all  # keep the repo's version
 Neovim's `lua/config/lazy.lua` dynamically checks whether an optional overlay directory (`lua/google-plugins`) exists before importing it:
 ```lua
 local google_plugins_dir = vim.fn.stdpath("config") .. "/lua/google-plugins"
-if (vim.uv or vim.loop).fs_stat(google_plugins_dir) then
+if vim.uv.fs_stat(google_plugins_dir) then
   table.insert(plugins_spec, { import = "google-plugins" })
 end
 ```

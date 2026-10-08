@@ -12,10 +12,6 @@ return {
         },
       },
     },
-  },
-
-  {
-    "nvim-mini/mini.diff",
     config = function(_, opts)
       require("mini.diff").setup(opts)
       Snacks.toggle({

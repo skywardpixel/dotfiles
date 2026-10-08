@@ -2,7 +2,6 @@
 -- loading lazy.nvim so that mappings are correct.
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-vim.opt.termguicolors = true
 
 -- Auto read/write
 vim.opt.autoread = true
@@ -17,7 +16,7 @@ vim.opt.cursorline = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- Hide mode since we have lualine
+-- Hide mode since the statusline shows it
 vim.opt.showmode = false
 
 -- Confirm to save changes before exiting modified buffer
@@ -28,9 +27,7 @@ vim.opt.expandtab = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
-vim.opt.smarttab = true
 vim.opt.smartindent = true
-vim.opt.autoindent = true
 vim.opt.breakindent = true
 
 -- Scroll options

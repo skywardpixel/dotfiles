@@ -34,9 +34,5 @@ if command -v abbr >/dev/null 2>&1; then
   abbr -S -f -q "n"="nvim"
 fi
 
-if [[ -f ~/.aliases.google ]]; then
-  source ~/.aliases.google
-fi
-if [[ -f ~/.aliases.local ]]; then
-  source ~/.aliases.local
-fi
+for _f in ~/.aliases.{google,local}(N); do source $_f; done
+unset _f
