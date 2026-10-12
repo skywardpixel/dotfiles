@@ -49,8 +49,19 @@ _pr_vcs_git_render() {
     esac
   done
 
-  [[ $branch == '(detached)' ]] &&
-    branch="@$(_pr_run git rev-parse --short HEAD)"
+  # Like `git status`'s "HEAD detached at <ref>": take the target of the last
+  # checkout from the reflog, if it still resolves to HEAD. Else short hash.
+  if [[ $branch == '(detached)' ]]; then
+    local ref head
+    ref=$(_pr_run git log -g -1 --grep-reflog='^checkout: moving from ' \
+            --format=%gs HEAD)
+    ref=${ref##* to }
+    head=$(_pr_run git rev-parse HEAD)
+    if [[ -z $ref || $(_pr_run git rev-parse -q --verify "$ref^{commit}") != $head ]]; then
+      ref=$(_pr_run git rev-parse --short HEAD)
+    fi
+    branch="@$ref"
+  fi
 
   local _out='' REPLY
   _pr_esc "$branch"
