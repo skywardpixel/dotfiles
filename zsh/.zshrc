@@ -37,7 +37,10 @@ autoload -Uz compinit
     compinit -C -d $dump
   else
     compinit -d $dump
-    { zcompile -R -- $dump } &!
+    touch $dump
+    if [[ ! $dump.zwc -nt $dump ]] && mkdir $dump.lock 2>/dev/null; then
+      { zcompile -R -- $dump; rmdir $dump.lock } &!
+    fi
   fi
 }
 
