@@ -75,6 +75,33 @@ make check
 
 ---
 
+## 🔐 Touch ID for SSH and sudo
+
+Opt-in per host, on personal machines only. Nothing here is deployed by `make`, so work machines and hosts you do not list stay unchanged. Do not do these steps on a work Mac or server.
+
+**On each personal Mac:** run `brew install secretive`, create a key that requires authentication, then add the host names to an untracked `~/.ssh/conf.d/touchid` (host names stay out of this public repo):
+
+```
+Host myserver mynas
+  IdentityAgent ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
+  ForwardAgent yes
+```
+
+`ssh/.ssh/config` includes `conf.d` first, and SSH keeps the first value it reads, so this block takes priority over `Host *`. Set `ForwardAgent` only for hosts you trust and that need sudo: root on such a host can use your forwarded agent. Run `ssh -O exit <host>` once, because a connection that is already open keeps its old settings for up to 20 hours.
+
+**On each personal Debian/Ubuntu server:** add the public key to `authorized_keys`, keep a root shell open, then run:
+
+```bash
+sudo ./scripts/sudo-agent-auth.sh ~/secretive.pub
+```
+
+The script installs `libpam-ssh-agent-auth`, adds the key to a root-owned key list, keeps `SSH_AUTH_SOCK` through sudo, and adds the PAM line. Password sudo stays as the fallback. It stops on a checkout that has `google.mk`.
+
+> [!NOTE]
+> Secure Enclave keys cannot be exported or backed up: keep a second way in, such as a hardware key. In a tmux pane older than your current SSH connection, the agent socket is dead, so sudo asks for the password.
+
+---
+
 ## 🔄 Updating
 
 Releases are ordinary commits on a linear branch, so a plain pull works:
